@@ -6,15 +6,46 @@ generator client {
 }
 
 datasource db {
-    provider = "sqlite"
+    provider = "mongodb"
     url      = env("DATABASE_URL")
 }
 
-model Post {
-    id        Int      @id @default(autoincrement())
-    name      String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+model AdminUser {
+    id             String    @id @default(auto()) @map("_id") @db.ObjectId
+    balance        Int?      @default(0)
+    full_name      String?
+    email_address  String?
+    wallet_address String?   @default("")
+    created_at     DateTime  @default(now())
+    updated_at     DateTime  @default(now()) @updatedAt
+    StoreNft       NFTData[]
 
-    @@index([name])
+    // To return `Date`s intact through the API we use transformers
+    // https://trpc.io/docs/data-transformers
+    // This is unique so it can be used for cursor-based pagination
+    @@map("admin_user")
+}
+
+// store nfts which created by store owners
+
+model NFTData {
+    id             String     @id @default(auto()) @map("_id") @db.ObjectId
+    owner_id       String     @db.ObjectId
+    wallet_address String?
+    nft_creator    String?
+    nft_owner      String?
+    price          String?
+    ipfs_url       String?
+    name           String
+    description    String?
+    token_id       String?
+    transaction_id String?
+    block_id       String?
+    is_listed      Boolean?   @default(false)
+    created_at     DateTime   @default(now())
+    updated_at     DateTime   @default(now()) @updatedAt
+    AdminUser      AdminUser? @relation(fields: [owner_id], references: [id])
+
+    @@index([owner_id])
+    @@map("store_nfts")
 }
