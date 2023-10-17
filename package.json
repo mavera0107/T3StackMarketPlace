@@ -27,6 +27,7 @@
     "@trpc/next": "^10.37.1",
     "@trpc/react-query": "^10.37.1",
     "@trpc/server": "^10.37.1",
+    "@types/react-redux": "^7.1.27",
     "@web3auth/base": "^7.0.4",
     "@web3auth/modal": "^7.0.4",
     "ethers": "^5",
