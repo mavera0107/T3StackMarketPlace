@@ -3,19 +3,19 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
-
 export default function Home() {
   const router = useRouter();
   // const hello = trpc.post.hello.useQuery({ text: "from tRPC" });
   useEffect(() => {
-    let checkUser: any = localStorage.getItem("user") as any;
-    if (checkUser !== "true") {
-      router.push("/login");
-    } else if (checkUser === "true") {
-      router.push("/");
-    } else {
-      console.log("/login", localStorage.getItem("user"));
-    }
+    console.log("");
+    // let checkUser: any = localStorage.getItem("user") as any;
+    // if (checkUser !== "true") {
+    //   router.push("/login");
+    // } else if (checkUser === "true") {
+    //   router.push("/");
+    // } else {
+    //   console.log("/login", localStorage.getItem("user"));
+    // }
   }, []);
 
   return (

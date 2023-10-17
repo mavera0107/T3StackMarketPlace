@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, Fragment } from "react";
 import SocialLogin from "@biconomy/web3-auth";
 import { ethers } from "ethers";
 import { ChainId } from "@biconomy/core-types";
-import { paymaster, bundler } from "../contants";
+import { paymaster, bundler, Debug } from "../contants";
 import {
   BiconomySmartAccount,
   BiconomySmartAccountConfig,
@@ -13,6 +13,8 @@ import Trpc from "~/pages/api/trpc/[trpc]";
 import { api } from "~/utils/api";
 import { Web3Auth } from "@web3auth/modal";
 import { CHAIN_NAMESPACES, WALLET_ADAPTERS } from "@web3auth/base";
+import { Button } from "../ui/ui/button";
+import { Loader2 } from "lucide-react";
 
 export default function RegisterationPage() {
   const router = useRouter();
@@ -29,8 +31,10 @@ export default function RegisterationPage() {
     },
     onError: (err: any) => {
       console.log(err.message, "login err");
+      setIsLoading(false);
     },
   });
+
   useEffect(() => {
     const init = async () => {
       try {
@@ -51,7 +55,7 @@ export default function RegisterationPage() {
             chainNamespace: CHAIN_NAMESPACES.EIP155,
             chainId: "0x13881",
             rpcTarget:
-              "https://polygon-mumbai.g.alchemy.com/v2/k0ZdGCqzkFU8FQOXL5gaounEuhwB_N-l", // This is the public RPC we have added, please pass on your own endpoint while creating an app
+              "https://polygon-mumbai.g.alchemy.com/v2/Mh7MEm0SLywtlNh1_bcuroflDlQ3wYpu", // This is the public RPC we have added, please pass on your own endpoint while creating an app
           },
           web3AuthNetwork: "testnet",
         });
@@ -164,7 +168,7 @@ export default function RegisterationPage() {
       let web3Provider: any = new ethers.providers.Web3Provider(
         web3authProvider,
       );
-      console.log("WEb3 Providers .. ", web3Provider.getSigner());
+      Debug && console.log("WEb3 Providers .. ", web3Provider.getSigner());
       const config: BiconomySmartAccountConfig = {
         signer: web3Provider.getSigner(),
         chainId: ChainId.POLYGON_MUMBAI,
@@ -173,13 +177,15 @@ export default function RegisterationPage() {
       };
       const smartAccount = new BiconomySmartAccount(config);
       await smartAccount.init();
-      console.log("Smart Account : ", smartAccount);
+      Debug && console.log("Smart Account : ", smartAccount);
       // Save the smart account to a state variable
       let address = await smartAccount.getSmartAccountAddress();
 
       let value: any = {
         wallet_address: address,
       };
+      console.log("Web3 Auth provider", web3authProvider);
+      console.log("Account", smartAccount);
       router.push("/test");
     } catch (e) {
       console.error(e);
@@ -188,21 +194,28 @@ export default function RegisterationPage() {
 
   return (
     <Fragment>
-      {!smartAccount && !isLoading ? (
+      {!isLoading ? (
         <div className="flex min-h-screen items-center justify-center">
           {" "}
-          <button
+          <Button
             onClick={loginHandle}
-            className="group relative mb-2 mr-2 inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-br from-gray-600 to-blue-500 p-0.5 text-sm font-medium
-           text-gray-900 hover:text-white focus:outline-none focus:ring-4 focus:ring-blue-300 group-hover:from-purple-600 group-hover:to-blue-500 dark:text-white dark:focus:ring-blue-800"
+            variant={"outline"}
+            className="rounded px-8 py-6 text-2xl text-green-500 hover:bg-green-300"
           >
-            <span className="relative rounded-md bg-white px-5 py-2.5 transition-all duration-75 ease-in group-hover:bg-opacity-0 dark:bg-blue-900">
-              Login
-            </span>
-          </button>
+            Login
+          </Button>
         </div>
       ) : (
-        <></>
+        <div className="flex min-h-screen items-center justify-center">
+          <Button
+            disabled
+            variant={"outline"}
+            className="rounded px-8 py-6 text-2xl text-green-500 hover:bg-green-300"
+          >
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            LogingIn
+          </Button>
+        </div>
       )}
     </Fragment>
   );
