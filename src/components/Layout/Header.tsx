@@ -11,7 +11,7 @@ export default function Header() {
         </a>
         <nav className="md:mr-auhref flex flex-wrap items-center justify-center text-base	md:ml-4 md:border-l md:border-gray-400 md:py-1 md:pl-4">
           <a className="mr-5 hover:text-gray-900">
-            <Link href="/MintNft">Mint Nft</Link>
+            <Link href="/mintNFT">Mint Nft</Link>
           </a>
           <a className="mr-5 hover:text-gray-900">
             <Link href="/MyNfts">My Nfts</Link>

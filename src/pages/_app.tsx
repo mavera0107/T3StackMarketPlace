@@ -1,18 +1,12 @@
 import { type AppType } from "next/app";
-import "@biconomy/web3-auth/dist/src/style.css";
-import { trpc } from "~/utils/trpc";
-
+import { api } from "~/utils/api";
 import "~/styles/globals.css";
-import dynamic from "next/dynamic";
-const Layout = dynamic(() => import("../components/Layout/index"), {
-  ssr: false,
-});
+// import dynamic from "next/dynamic";
+// const Layout = dynamic(() => import("../components/Layout/index"), {
+//   ssr: false,
+// });
 const MyApp: AppType = ({ Component, pageProps }) => {
-  return (
-    <Layout>
-      <Component {...pageProps} />
-    </Layout>
-  );
+  return <Component {...pageProps} />;
 };
 
-export default trpc.withTRPC(MyApp);
+export default api.withTRPC(MyApp);

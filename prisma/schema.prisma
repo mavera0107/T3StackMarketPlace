@@ -12,10 +12,10 @@ datasource db {
 
 model AdminUser {
     id             String    @id @default(auto()) @map("_id") @db.ObjectId
-    balance        Int?      @default(0)
-    full_name      String?
-    email_address  String?
-    wallet_address String?   @default("")
+    balance        Int       @default(0)
+    full_name      String    @default("")
+    email_address  String    @default("")
+    wallet_address String    @unique
     created_at     DateTime  @default(now())
     updated_at     DateTime  @default(now()) @updatedAt
     StoreNft       NFTData[]
@@ -36,11 +36,9 @@ model NFTData {
     nft_owner      String?
     price          String?
     ipfs_url       String?
-    name           String
+    name           String?
     description    String?
     token_id       String?
-    transaction_id String?
-    block_id       String?
     is_listed      Boolean?   @default(false)
     created_at     DateTime   @default(now())
     updated_at     DateTime   @default(now()) @updatedAt

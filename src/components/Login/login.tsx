@@ -9,116 +9,190 @@ import {
 } from "@biconomy/account";
 import { DEFAULT_ENTRYPOINT_ADDRESS } from "@biconomy/account";
 import { useRouter } from "next/router";
+import Trpc from "~/pages/api/trpc/[trpc]";
+import { api } from "~/utils/api";
+import { Web3Auth } from "@web3auth/modal";
+import { CHAIN_NAMESPACES, WALLET_ADAPTERS } from "@web3auth/base";
 
 export default function RegisterationPage() {
   const router = useRouter();
-  const sdkRef = useRef<SocialLogin | null>(null);
   const [interval, enableInterval] = useState<boolean>(false);
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [, setProvider] = useState<ethers.providers.Web3Provider>();
   const [smartAccount, setSmartAccount] = useState<BiconomySmartAccount>();
+  const clientId: any = process.env.NEXT_PUBLIC_CLIENT_ID; // get from https://dashboard.web3auth.io
+  const [web3auth, setWeb3auth] = useState<Web3Auth | null>(null);
 
-  async function login() {
-    console.log("Interval", interval);
-    console.log("sdk", sdkRef);
-    if (!sdkRef.current) {
-      const socialLoginSDK = new SocialLogin();
-      const signature1 = await socialLoginSDK.whitelistUrl(
-        "https://biconomy-social-login-market-git-main-muhammadwaqarqsol.vercel.app",
-      );
-      const signature2 = await socialLoginSDK.whitelistUrl(
-        "http://localhost:3000/",
-      );
-      await socialLoginSDK.init({
-        chainId: ethers.utils.hexValue(ChainId.POLYGON_MUMBAI).toString(),
-        network: "testnet",
-        whitelistUrls: {
-          "https://biconomy-social-login-market-git-main-muhammadwaqarqsol.vercel.app":
-            signature1,
-          "http://localhost:3000/": signature2,
-        },
-      });
-      sdkRef.current = socialLoginSDK;
-    }
-    if (!sdkRef.current?.provider) {
-      sdkRef.current?.showWallet();
-      enableInterval(true);
-    } else {
-      console.log("hello");
-      setupSmartAccount();
-    }
-  }
+  const loginUser = api.user.create.useMutation({
+    onSuccess(res: any) {
+      console.log(res, "Login result");
+    },
+    onError: (err: any) => {
+      console.log(err.message, "login err");
+    },
+  });
+  useEffect(() => {
+    const init = async () => {
+      try {
+        const web3auth = new Web3Auth({
+          clientId,
+          uiConfig: {
+            mode: "light",
+            appName: "NFTrops",
+            logoLight: "mainlogo.png", // <-- Your dApp Name
+            theme: {
+              primary: "#ffffff",
+            }, // "light" | "dark" | "auto"
+            defaultLanguage: "en", // en, de, ja, ko, zh, es, fr, pt, nl
+            loginGridCol: 2, // 2 | 3
+            // primaryButton: "externalLogin", // "externalLogin" | "socialLogin" | "emailLogin"
+          },
+          chainConfig: {
+            chainNamespace: CHAIN_NAMESPACES.EIP155,
+            chainId: "0x13881",
+            rpcTarget:
+              "https://polygon-mumbai.g.alchemy.com/v2/k0ZdGCqzkFU8FQOXL5gaounEuhwB_N-l", // This is the public RPC we have added, please pass on your own endpoint while creating an app
+          },
+          web3AuthNetwork: "testnet",
+        });
 
-  async function setupSmartAccount() {
+        setWeb3auth(web3auth);
+
+        await web3auth.initModal({
+          modalConfig: {
+            openlogin: {
+              label: "openlogin",
+              loginMethods: {
+                facebook: {
+                  name: "facebook",
+                  showOnModal: false,
+                },
+                reddit: {
+                  name: "reddit",
+                  showOnModal: false,
+                },
+                twitch: {
+                  name: "twitch",
+                  showOnModal: false,
+                },
+                apple: {
+                  name: "apple",
+                  showOnModal: false,
+                },
+                line: {
+                  name: "line",
+                  showOnModal: false,
+                },
+                github: {
+                  name: "github",
+                  showOnModal: false,
+                },
+                kakao: {
+                  name: "kakao",
+                  showOnModal: false,
+                },
+                linkedin: {
+                  name: "linkedin",
+                  showOnModal: false,
+                },
+                twitter: {
+                  name: "twitter",
+                  showOnModal: false,
+                },
+                weibo: {
+                  name: "weibo",
+                  showOnModal: false,
+                },
+                discord: {
+                  name: "discord",
+                  showOnModal: false,
+                },
+                wechat: {
+                  name: "wechat",
+                  showOnModal: false,
+                },
+                email_passwordless: {
+                  name: "email_passwordless",
+                  showOnModal: false,
+                },
+                sms_passwordless: {
+                  name: "sms_passwordless",
+                  showOnModal: false,
+                },
+              },
+            },
+            [WALLET_ADAPTERS.WALLET_CONNECT_V2]: {
+              label: "wallet_connect",
+              showOnModal: false,
+            },
+            [WALLET_ADAPTERS.WALLET_CONNECT_V2]: {
+              label: "wallet_connect",
+              showOnModal: false,
+            },
+            // Disable Metamask
+            [WALLET_ADAPTERS.METAMASK]: {
+              label: "metamask",
+              showOnModal: false,
+            },
+            [WALLET_ADAPTERS.TORUS_EVM]: {
+              label: "TORUS_EVM",
+              showOnModal: false,
+            },
+          },
+        });
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    init();
+  }, []);
+
+  const loginHandle = async () => {
+    if (!web3auth) {
+      return;
+    }
+    setIsLoading(true);
+    const web3authProvider: any = await web3auth.connect();
+
+    // SmartAccount
+    setupSmartAccount(web3authProvider);
+  };
+
+  async function setupSmartAccount(web3authProvider: any) {
     try {
-      // If the SDK hasn't fully initialized, return early
-      if (!sdkRef.current?.provider) return;
-
-      // Hide the wallet if currently open
-      sdkRef.current.hideWallet();
-
-      // Start the loading indicator
-      setLoading(true);
-
       // Initialize the smart account
-      let web3Provider = new ethers.providers.Web3Provider(
-        sdkRef.current?.provider,
+      let web3Provider: any = new ethers.providers.Web3Provider(
+        web3authProvider,
       );
-      setProvider(web3Provider);
+      console.log("WEb3 Providers .. ", web3Provider.getSigner());
       const config: BiconomySmartAccountConfig = {
         signer: web3Provider.getSigner(),
-        rpcUrl: process.env.NEXT_PUBLIC_RPC,
-        entryPointAddress: DEFAULT_ENTRYPOINT_ADDRESS,
         chainId: ChainId.POLYGON_MUMBAI,
         bundler: bundler,
         paymaster: paymaster,
       };
       const smartAccount = new BiconomySmartAccount(config);
       await smartAccount.init();
-
+      console.log("Smart Account : ", smartAccount);
       // Save the smart account to a state variable
-      setSmartAccount(smartAccount);
-      localStorage.setItem("User", "true");
+      let address = await smartAccount.getSmartAccountAddress();
+
+      let value: any = {
+        wallet_address: address,
+      };
       router.push("/test");
     } catch (e) {
       console.error(e);
     }
-    setLoading(false);
   }
-  useEffect(() => {
-    let configureLogin: NodeJS.Timeout | undefined;
-    if (interval) {
-      configureLogin = setInterval(() => {
-        if (!!sdkRef.current?.provider) {
-          setupSmartAccount();
-          clearInterval(configureLogin);
-        }
-      }, 1000);
-    }
-  }, [interval]);
 
-  useEffect(() => {
-    let checkUser: any = localStorage.getItem("user") as any;
-    if (checkUser !== "true") {
-      router.push("/login");
-    } else {
-      router.push("/test");
-      console.log("/login", localStorage.getItem("user"));
-    }
-  }, []);
   return (
     <Fragment>
-      {!smartAccount && !loading ? (
+      {!smartAccount && !isLoading ? (
         <div className="flex min-h-screen items-center justify-center">
-          {/* {" "}
+          {" "}
           <button
-            onClick={login}
-            className=" position m-12 rounded-lg border-green-400 bg-slate-400 p-4"
-          >
-            Login
-          </button> */}
-          <button
-            onClick={login}
+            onClick={loginHandle}
             className="group relative mb-2 mr-2 inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-br from-gray-600 to-blue-500 p-0.5 text-sm font-medium
            text-gray-900 hover:text-white focus:outline-none focus:ring-4 focus:ring-blue-300 group-hover:from-purple-600 group-hover:to-blue-500 dark:text-white dark:focus:ring-blue-800"
           >

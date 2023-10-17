@@ -3,7 +3,6 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
-import { trpc } from "~/utils/trpc";
 
 export default function Home() {
   const router = useRouter();
@@ -13,12 +12,12 @@ export default function Home() {
     if (checkUser !== "true") {
       router.push("/login");
     } else if (checkUser === "true") {
-      router.push("/test");
-      console.log("/test", localStorage.getItem("user"));
+      router.push("/");
     } else {
       console.log("/login", localStorage.getItem("user"));
     }
   }, []);
+
   return (
     <>
       <Head>
