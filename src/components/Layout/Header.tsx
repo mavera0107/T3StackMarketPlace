@@ -1,6 +1,21 @@
 import React from "react";
 import Link from "next/link";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../ui/ui/dropdown-menu";
+import { useRouter } from "next/router";
 export default function Header() {
+  const router = useRouter();
+
+  function profile() {
+    router.push("/profile");
+  }
   return (
     <header className="body-font text-gray-600">
       <div className="mx-auhref container flex flex-col flex-wrap items-center p-5 md:flex-row">
@@ -19,30 +34,30 @@ export default function Header() {
           <a className="mr-5 hover:text-gray-900">
             <Link href="/ListedNfts">Listed Nfts</Link>
           </a>
-          <a className="mr-5 hover:text-gray-900">
-            <Link href="/RecentTransfers">Recent Transfers</Link>
-          </a>
-          <a className="mr-5 hover:text-gray-900">
-            <Link href="/BoughtNFTs">Recent Bought</Link>
-          </a>
-          <a className="mr-5 hover:text-gray-900">
-            <Link href="/SoldNFTs">Sold NFTs</Link>
-          </a>
-          <a className="mr-5 hover:text-gray-900">
-            <Link href="/market">For Sale</Link>
-          </a>
         </nav>
-        <div className="flex flex-row items-center justify-center gap-6 rounded-lg ">
-          <div>
-            {/* {isConnected ? (
-              <p className="items-center justify-center rounded-3xl bg-purple-300 p-2 text-xl">
-                Owned : {Ownerof?.hrefString()}
-              </p>
-            ) : null} */}
-            owner of address
-          </div>
-          ACCOUNT balance
-          {/* <ConnectKitButhrefn showBalance /> */}
+        <div>
+          {" "}
+          <DropdownMenu>
+            <div className="flex flex-row justify-around ">
+              <DropdownMenuTrigger className="m-2 text-xl font-bold">
+                Open
+              </DropdownMenuTrigger>
+              <Avatar>
+                <AvatarImage src="https://github.com/shadcn.png" />
+                <AvatarFallback>CN</AvatarFallback>
+              </Avatar>
+            </div>
+            <DropdownMenuContent>
+              <DropdownMenuItem className="font-bold" onClick={profile}>
+                Profile
+              </DropdownMenuItem>
+              <DropdownMenuSeparator className="bg-gray-300" />
+              <DropdownMenuItem className="font-bold">
+                Recent Transactions
+              </DropdownMenuItem>
+              <DropdownMenuItem className="font-bold">Logout</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
     </header>

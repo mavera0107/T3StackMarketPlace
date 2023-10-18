@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState, Fragment } from "react";
-import SocialLogin from "@biconomy/web3-auth";
+import { useEffect, useState, Fragment } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { ethers } from "ethers";
 import { ChainId } from "@biconomy/core-types";
 import { paymaster, bundler, Debug } from "../contants";
@@ -7,21 +8,19 @@ import {
   BiconomySmartAccount,
   BiconomySmartAccountConfig,
 } from "@biconomy/account";
-import { DEFAULT_ENTRYPOINT_ADDRESS } from "@biconomy/account";
 import { useRouter } from "next/router";
-import Trpc from "~/pages/api/trpc/[trpc]";
 import { api } from "~/utils/api";
 import { Web3Auth } from "@web3auth/modal";
 import { CHAIN_NAMESPACES, WALLET_ADAPTERS } from "@web3auth/base";
 import { Button } from "../ui/ui/button";
 import { Loader2 } from "lucide-react";
-
+import { setSmartAccount } from "~/redux/Features/smartAccountslice";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "~/redux/store";
 export default function RegisterationPage() {
+  const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
-  const [interval, enableInterval] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [, setProvider] = useState<ethers.providers.Web3Provider>();
-  const [smartAccount, setSmartAccount] = useState<BiconomySmartAccount>();
   const clientId: any = process.env.NEXT_PUBLIC_CLIENT_ID; // get from https://dashboard.web3auth.io
   const [web3auth, setWeb3auth] = useState<Web3Auth | null>(null);
 
@@ -30,8 +29,18 @@ export default function RegisterationPage() {
       console.log(res, "Login result");
     },
     onError: (err: any) => {
-      console.log(err.message, "login err");
+      toast.error(err.message, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
       setIsLoading(false);
+      console.log(err.message, "login err");
     },
   });
 
@@ -157,7 +166,6 @@ export default function RegisterationPage() {
     }
     setIsLoading(true);
     const web3authProvider: any = await web3auth.connect();
-
     // SmartAccount
     setupSmartAccount(web3authProvider);
   };
@@ -180,13 +188,38 @@ export default function RegisterationPage() {
       Debug && console.log("Smart Account : ", smartAccount);
       // Save the smart account to a state variable
       let address = await smartAccount.getSmartAccountAddress();
-
+      const user = await web3auth?.getUserInfo();
+      console.log("User", user);
+      console.log(user?.email, user?.name);
       let value: any = {
         wallet_address: address,
+        balance: 0,
+        email_address: user?.email,
+        full_name: user?.name,
       };
-      console.log("Web3 Auth provider", web3authProvider);
+
+      let response = await loginUser.mutateAsync(value);
+      console.log("Response", response);
+
+      if (response.id) {
+        toast.success("Signin Successfully!", {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      }
+      // console.log("Web3 Auth provider", web3authProvider);
       console.log("Account", smartAccount);
-      router.push("/test");
+      localStorage.setItem("user", JSON.stringify(response));
+      dispatch(setSmartAccount(smartAccount));
+      setTimeout(() => {
+        router.push("/test"); // Replace '/test' with your desired route
+      }, 2000);
     } catch (e) {
       console.error(e);
     }
@@ -217,6 +250,20 @@ export default function RegisterationPage() {
           </Button>
         </div>
       )}
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+      {/* Same as */}
+      <ToastContainer />
     </Fragment>
   );
 }
