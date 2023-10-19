@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { api } from "~/utils/api";
 import { CreateUserInput, createUserSchema } from "~/schema/user";
 import { Button } from "~/components/ui/ui/button";
 import { Loader2 } from "lucide-react";
+import Card from "~/components/card/nftcard";
 const test = () => {
   const [address, setAddress] = useState("");
   // const create = api.user.create.useMutation(createUserSchema){
@@ -25,7 +26,12 @@ const test = () => {
     getUser();
   }, []);
 
-  return <></>;
+  return (
+    <Fragment>
+      Hello
+      <Card />
+    </Fragment>
+  );
 };
 
 export default test;

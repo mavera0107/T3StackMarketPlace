@@ -196,7 +196,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
 
   return (
     <Fragment>
-      {user?.id ? <Header /> : ""}
+      <Header />
       <Fragment>
         <main>{children}</main>
       </Fragment>
