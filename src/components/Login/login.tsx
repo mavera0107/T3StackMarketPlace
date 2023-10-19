@@ -235,7 +235,8 @@ export default function RegisterationPage() {
             variant={"outline"}
             className="rounded px-8 py-6 text-2xl text-green-500 hover:bg-green-300"
           >
-            Login
+            <img src="google-signIn.png" className="h-10 w-10 p-1" />
+            Login with Google
           </Button>
         </div>
       ) : (
@@ -246,7 +247,7 @@ export default function RegisterationPage() {
             className="rounded px-8 py-6 text-2xl text-green-500 hover:bg-green-300"
           >
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            LogingIn
+            LogingIn Please Wait
           </Button>
         </div>
       )}

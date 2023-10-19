@@ -12,13 +12,14 @@ datasource db {
 
 model AdminUser {
     id             String    @id @default(auto()) @map("_id") @db.ObjectId
-    balance        Int       @default(0)
     full_name      String    @default("")
     email_address  String    @default("")
+    usdc_balance   Int       @default(0)
+    totalNFTS      Int       @default(0)
     wallet_address String    @unique
     created_at     DateTime  @default(now())
     updated_at     DateTime  @default(now()) @updatedAt
-    StoreNft       NFTData[]
+    UserNFTs       NFTData[]
 
     // To return `Date`s intact through the API we use transformers
     // https://trpc.io/docs/data-transformers
@@ -29,21 +30,20 @@ model AdminUser {
 // store nfts which created by store owners
 
 model NFTData {
-    id             String     @id @default(auto()) @map("_id") @db.ObjectId
-    owner_id       String     @db.ObjectId
-    wallet_address String?
-    nft_creator    String?
-    nft_owner      String?
-    price          String?
-    ipfs_url       String?
-    name           String?
-    description    String?
-    token_id       String?
-    is_listed      Boolean?   @default(false)
-    created_at     DateTime   @default(now())
-    updated_at     DateTime   @default(now()) @updatedAt
-    AdminUser      AdminUser? @relation(fields: [owner_id], references: [id])
+    id          String    @id @default(auto()) @map("_id") @db.ObjectId
+    nft_creator String?
+    nft_owner   String?
+    price       String?
+    ipfs_url    String?
+    name        String?
+    description String?
+    token_id    String?
+    is_listed   Boolean?  @default(false)
+    created_at  DateTime  @default(now())
+    updated_at  DateTime  @default(now()) @updatedAt
+    owner_id    String    @db.ObjectId
+    AdminUser   AdminUser @relation(fields: [owner_id], references: [id])
 
     @@index([owner_id])
-    @@map("store_nfts")
+    @@map("user_nfts")
 }
