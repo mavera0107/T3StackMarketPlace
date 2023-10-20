@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { BsChevronCompactLeft, BsChevronCompactRight } from "react-icons/bs";
 import { RxDotFilled } from "react-icons/rx";
+import MainTabs from "~/components/card/maintab";
 export default function Home() {
   const router = useRouter();
   const slides = [
@@ -79,12 +80,6 @@ export default function Home() {
               className="h-[400px] w-full rounded-2xl bg-cover bg-center duration-500 md:h-[350px]"
             ></div>
           </div>
-          <div className="absolute left-5 top-[50%] hidden -translate-x-0 translate-y-[-50%] cursor-pointer rounded-full bg-black/20 p-2 text-2xl text-white group-hover:block">
-            <BsChevronCompactLeft onClick={prevSlide} size={30} />
-          </div>
-          <div className="absolute right-5 top-[50%] hidden -translate-x-0 translate-y-[-50%] cursor-pointer rounded-full bg-black/20 p-2 text-2xl text-white group-hover:block">
-            <BsChevronCompactRight onClick={nextSlide} size={30} />
-          </div>
           <div className="top-4 flex w-[1400] justify-center py-2">
             {slides.map((slide, slideIndex) => (
               <div
@@ -97,8 +92,8 @@ export default function Home() {
             ))}
           </div>
         </div>
-        <div>{/* <MainTabs /> */}</div>
       </div>
+      <MainTabs />
     </>
   );
 }

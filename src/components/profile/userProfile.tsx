@@ -96,22 +96,23 @@ export default function userProfile() {
                   Update data
                 </Button>
               </SheetTrigger>
-              <SheetContent>
+              <SheetContent className="bg-white">
                 <SheetHeader>
                   <SheetTitle>Edit profile</SheetTitle>
                   <SheetDescription>
                     Make changes to your profile here. Click save when you're
-                    done. <br></br>You Can Also Change one Field Just Fill One and leave
-                    other one Empty.
+                    done. <br></br>You Can Also Change one Field Just Fill One
+                    and leave other one Empty.
                   </SheetDescription>
                 </SheetHeader>
                 <div className="grid gap-4 py-4">
                   <div className="mb-6 md:flex md:items-center">
                     <div className="md:w-1/3">
                       <label className="mb-1 block pr-4 font-bold text-gray-500 md:mb-0 md:text-right">
-                        Name
+                        Update Name
                       </label>
                     </div>
+
                     <div className="md:w-2/3">
                       <input
                         type="text"
@@ -124,10 +125,17 @@ export default function userProfile() {
                       />
                     </div>
                   </div>
+                  <Button
+                    type="submit"
+                    className="rounded-xl bg-gray-200 hover:bg-green-300"
+                    onClick={UpdateData}
+                  >
+                    Save Name
+                  </Button>
                   <div className="mb-6 md:flex md:items-center">
                     <div className="md:w-1/3">
                       <label className="mb-1 block pr-4 font-bold text-gray-500 md:mb-0 md:text-right">
-                        Email
+                        Update Email
                       </label>
                     </div>
                     <div className="md:w-2/3">
@@ -142,8 +150,15 @@ export default function userProfile() {
                       />
                     </div>
                   </div>
+                  <Button
+                    type="submit"
+                    className="rounded-xl bg-gray-200 hover:bg-green-300"
+                    onClick={UpdateData}
+                  >
+                    Save Email
+                  </Button>
                 </div>
-                <SheetFooter>
+                {/* <SheetFooter>
                   <SheetClose asChild>
                     <Button
                       type="submit"
@@ -153,7 +168,7 @@ export default function userProfile() {
                       Save changes
                     </Button>
                   </SheetClose>
-                </SheetFooter>
+                </SheetFooter> */}
               </SheetContent>
             </Sheet>
           </CardFooter>

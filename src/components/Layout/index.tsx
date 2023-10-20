@@ -15,6 +15,7 @@ import { setSmartAccount } from "~/redux/Features/smartAccountslice";
 import { ChainId } from "@biconomy/core-types";
 import { bundler, paymaster } from "../contants";
 import { useSelector } from "react-redux";
+import Footer from "./Footer";
 
 const Layout = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<any>();
@@ -200,6 +201,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
       <Fragment>
         <main>{children}</main>
       </Fragment>
+      <Footer />
     </Fragment>
   );
 };
