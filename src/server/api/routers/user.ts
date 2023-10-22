@@ -8,6 +8,7 @@ import {
 import { TRPCError } from "@trpc/server";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { redirect } from "next/dist/server/api-utils";
+import { db } from "~/server/db";
 
 export const userRouter = createTRPCRouter({
   all: publicProcedure.query(({ ctx }) => {
@@ -54,11 +55,6 @@ export const userRouter = createTRPCRouter({
           });
           console.log("User Created", user);
           return { user };
-          // return ctx.db.adminUser.create({
-          //   data: {
-          //     wallet_address: input.wallet_address,
-          //   },
-          // });
         }
         console.log(user);
         return { user };
@@ -71,20 +67,46 @@ export const userRouter = createTRPCRouter({
       }
     }),
 
-  get: publicProcedure.input(getUserSchema).query(async ({ ctx, input }) => {
-    try {
-      console.log("input", input);
+  getuserdata: publicProcedure
+    .input(getUserSchema)
+    .query(async ({ ctx, input }) => {
+      try {
+        console.log("input", input);
 
-      const user = await ctx.db.adminUser.findFirst({
-        where: { wallet_address: input?.wallet_address },
-      });
-      return { user };
-    } catch (error: any) {
-      console.log({ error });
-      throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: error.message,
-      });
-    }
-  }),
+        const user = await ctx.db?.adminUser?.findFirst({
+          where: { wallet_address: input?.wallet_address },
+        });
+        return { user };
+      } catch (error: any) {
+        console.log({ error });
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: error.message,
+        });
+      }
+    }),
+
+  updateUser: publicProcedure
+    .input(updateUserSchema)
+    .mutation(async ({ ctx, input }) => {
+      try {
+        console.log("userUpdate", input);
+        let option: any = {};
+        option.where = {
+          wallet_address: input.wallet_address,
+        };
+        option.data = {
+          full_name: input.full_name,
+        };
+        const updateResponse = await ctx.db?.adminUser?.update(option);
+        console.log("Update Response", updateResponse);
+        return updateResponse;
+      } catch (e) {
+        console.log("Error", e);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Something Went wrong",
+        });
+      }
+    }),
 });

@@ -56,7 +56,7 @@ function mintingpage() {
   }, [getNftDetails, isImageSelected]);
 
   return (
-    <main className="mt-16 flex flex-col items-center justify-center">
+    <main className=" mt-16 flex scroll-m-0 flex-col items-center justify-center">
       <div className="border-2 border-dashed border-black">
         {selectedImage && (
           <div
@@ -85,13 +85,7 @@ function mintingpage() {
             className="flex flex-col justify-center border-2 border-dashed border-black font-extrabold"
           >
             <div className="flex flex-col items-center justify-center">
-              <p>Upload Images or GIFs</p>
-              {/* <input
-                onChange={handleFileInputChange}
-                type="file"
-                id="myfile"
-                name="myfile"
-              ></input> */}
+              <p className="p-6">Upload Images or GIFs</p>
               <div className="relative">
                 <label className="cursor-pointer rounded-lg bg-blue-500 px-4 py-2 text-white">
                   <input

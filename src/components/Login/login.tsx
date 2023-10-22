@@ -185,7 +185,7 @@ export default function RegisterationPage() {
       };
       const smartAccount = new BiconomySmartAccount(config);
       await smartAccount.init();
-      Debug && console.log("Smart Account : ", smartAccount);
+      console.log("Smart Account : ", smartAccount);
       // Save the smart account to a state variable
       let address = await smartAccount.getSmartAccountAddress();
       const user = await web3auth?.getUserInfo();

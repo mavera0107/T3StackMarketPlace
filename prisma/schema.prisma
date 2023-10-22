@@ -14,8 +14,8 @@ model AdminUser {
     id             String    @id @default(auto()) @map("_id") @db.ObjectId
     full_name      String    @default("")
     email_address  String    @default("")
-    usdc_balance   Int       @default(0)
-    totalNFTS      Int       @default(0)
+    // usdc_balance   Int       @default(0)
+    // totalNFTS      Int       @default(0)
     wallet_address String    @unique
     created_at     DateTime  @default(now())
     updated_at     DateTime  @default(now()) @updatedAt
