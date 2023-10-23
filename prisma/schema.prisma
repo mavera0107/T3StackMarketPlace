@@ -21,6 +21,8 @@ model AdminUser {
     updated_at     DateTime  @default(now()) @updatedAt
     UserNFTs       NFTData[]
 
+    // NFTOffer       NFTOffer[]
+    // NFTAuction     NFTAuction[]
     // To return `Date`s intact through the API we use transformers
     // https://trpc.io/docs/data-transformers
     // This is unique so it can be used for cursor-based pagination
@@ -37,13 +39,58 @@ model NFTData {
     ipfs_url    String?
     name        String?
     description String?
-    token_id    String?
+    token_id    String?   @unique
     is_listed   Boolean?  @default(false)
     created_at  DateTime  @default(now())
     updated_at  DateTime  @default(now()) @updatedAt
     owner_id    String    @db.ObjectId
     AdminUser   AdminUser @relation(fields: [owner_id], references: [id])
+    // NFTOffer    NFTOffer[]
+    // NFTAuction  NFTAuction[]
 
     @@index([owner_id])
     @@map("user_nfts")
 }
+
+// model NFTOffer {
+//     id          String         @id @default(auto()) @map("_id") @db.ObjectId
+//     nftDataId   String         @db.ObjectId
+//     adminUserId String         @db.ObjectId
+//     price       String
+//     status      NFTOfferStatus // You can define an enum for offer statuses
+//     created_at  DateTime       @default(now())
+//     updated_at  DateTime       @default(now()) @updatedAt
+//     NFTData     NFTData        @relation(fields: [nftDataId], references: [id])
+//     AdminUser   AdminUser      @relation(fields: [adminUserId], references: [id])
+
+//     @@map("nft_offers")
+// }
+
+// enum NFTOfferStatus {
+//     PENDING
+//     ACCEPTED
+//     REJECTED
+//     WITHDRAWN
+// }
+
+// model NFTAuction {
+//     id            String           @id @default(auto()) @map("_id") @db.ObjectId
+//     nftDataId     String           @db.ObjectId
+//     adminUserId   String           @db.ObjectId
+//     startingPrice String
+//     currentBid    String
+//     endTime       DateTime
+//     status        NFTAuctionStatus
+//     created_at    DateTime         @default(now())
+//     updated_at    DateTime         @default(now()) @updatedAt
+//     NFTData       NFTData          @relation(fields: [nftDataId], references: [id])
+//     AdminUser     AdminUser        @relation(fields: [adminUserId], references: [id])
+
+//     @@map("nft_auctions")
+// }
+
+// enum NFTAuctionStatus {
+//     ACTIVE
+//     COMPLETED
+//     CANCELED
+// }

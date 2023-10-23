@@ -120,7 +120,7 @@ const test = () => {
 
   async function NFTList() {
     let value: any = {
-      token_id: "1",
+      token_id: String(1),
       price: "10",
       is_listed: true,
     };

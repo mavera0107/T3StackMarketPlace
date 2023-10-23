@@ -540,6 +540,19 @@ export const NFT_ABI = [
     type: "event",
   },
   {
+    inputs: [],
+    name: "_tokenIds",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "_value",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "address",
