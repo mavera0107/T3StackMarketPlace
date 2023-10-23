@@ -93,7 +93,9 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <MainTabs />
+      <div className="mb-32">
+        <MainTabs />
+      </div>
     </>
   );
 }

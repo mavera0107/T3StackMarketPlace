@@ -1,11 +1,39 @@
 import React, { ChangeEvent, useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-// import ImageUploader from "../utils/ImageUploader";
-// import metaData from "../utils/Metadata";
-import { Debug } from "../contants";
-// import { useNFTFunctionwriter } from "../utils/hook";
+import ImageUploader from "~/utils/ImageUploadIpfs";
+import metaData from "~/utils/metadataUploadIpfs";
+import { Debug } from "../../utils/contants";
 import Link from "next/link";
+
+import { RootState, useAppSelector } from "~/redux/store";
+import { BiconomySmartAccount } from "@biconomy/account";
+import { ethers } from "ethers";
+import { NFT_Contract_Address, NFT_ABI } from "~/utils/contants";
+import {
+  IHybridPaymaster,
+  PaymasterMode,
+  SponsorUserOperationDto,
+} from "@biconomy/paymaster";
+import { useSelector } from "react-redux";
+import { api } from "~/utils/api";
+import { useRouter } from "next/router";
+
+// interface MintModalProps {
+//   selectedImage: File | null | undefined;
+//   getNftDetails: {
+//     NftName: string;
+//     Description: string;
+//   };
+//   isFormValid: boolean;
+//   setSelectedImage: React.Dispatch<
+//     React.SetStateAction<File | null | undefined>
+//   >;
+//   setNftDetails: React.Dispatch<
+//     React.SetStateAction<{ NftName: string; Description: string }>
+//   >;
+// }
+
 interface MintModalProps {
   selectedImage: File | null | undefined;
   getNftDetails: {
@@ -28,48 +56,75 @@ export const MintModal: React.FC<MintModalProps> = ({
   setNftDetails,
   setSelectedImage,
 }: MintModalProps) => {
+  // const smartAccount = useAppSelector(
+  //   (state) => state.smartAccountSlice.smartAccount,
+  // );
   // Access the title prop and use it in your component
-  const [transactionerror, setTransactionerror] = useState("");
+  const [tokenId, setTokenId] = useState("");
+  const router = useRouter();
   const [showModal, setShowModal] = useState(false);
+  const [isError, setError] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const { smartAccount } = useSelector(
+    (state: RootState) => state.smartAccountSlice as any,
+  );
+
   const [MetadataStatus, setMetadataStatus] = useState(false);
   const [ImageStatus, setImageStatus] = useState(false);
-  const [Mintstatus, setMintstatus] = useState(false);
+  const [Mintstatus, setMintstatus] = useState<boolean>(false);
   const [tokenUri, setTokenUri] = useState<string>("");
+  const createNFT = api.nft.createNFT.useMutation({
+    onSuccess: (res: any) => {
+      if (res) {
+        toast("NFT Created Successfully!", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      }
+      router.push("/");
+      setIsLoading(false);
+    },
+    onError: (err: any) => {
+      toast.error(err, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      setIsLoading(false);
+      console.log(err.message, "NFT Creation Error");
+    },
+  });
 
-  async function mintNft() {
-    Debug && console.log("called");
-    try {
-      // const tx = await writeAsync?.();
-      // Debug && console.log("Transaction", tx?.hash);
-    } catch (error: any) {
-      Debug && console.log("Error >>>", error.message);
-      setTransactionerror("User Rejected The Request");
-      setMintstatus(false);
+  const handleUpload = async () => {
+    const uploadImages = await ImageUploader(
+      selectedImage,
+      getNftDetails.NftName,
+    );
+    if (uploadImages?.status === 200) {
+      setImageStatus(true);
     }
-  }
-
-  // const handleUpload = async () => {
-  //   Debug && console.log(selectedImage, getNftDetails);
-  //   const uploadImages = await ImageUploader(
-  //     selectedImage,
-  //     getNftDetails.NftName,
-  //   );
-  //   Debug && console.log(uploadImages?.status);
-  //   if (uploadImages?.status === 200) {
-  //     setImageStatus(true);
-  //   }
-  //   const metadatares = await metaData(
-  //     getNftDetails.NftName,
-  //     getNftDetails.Description,
-  //     uploadImages?.IpfshashImage,
-  //   );
-  //   Debug && console.log(metadatares?.status);
-  //   if (metadatares?.status === 200) {
-  //     setMetadataStatus(true);
-  //   }
-  //   let TokenUri = `https://ipfs.io/ipfs/${metadatares?.IpfsHash}`;
-  //   setTokenUri(TokenUri);
-  // };
+    const metadatares = await metaData(
+      getNftDetails.NftName,
+      getNftDetails.Description,
+      uploadImages?.IpfshashImage,
+    );
+    if (metadatares?.status === 200) {
+      setMetadataStatus(true);
+    }
+    let TokenUri = `https://ipfs.io/ipfs/${metadatares?.IpfsHash}`;
+    setTokenUri(TokenUri);
+  };
 
   function cancelAll() {
     setShowModal(false);
@@ -78,49 +133,103 @@ export const MintModal: React.FC<MintModalProps> = ({
     setMetadataStatus(false);
     setImageStatus(false);
     setSelectedImage(null);
+    setError(false);
     setNftDetails({ NftName: "", Description: "" });
   }
-  // useEffect(() => {
-  //   // if (isSuccess) {
-  //   //   setMintstatus(true);
-  //   //   isSuccess = false;
-  //   //   Debug && console.log(data, "Data");
-  //     // Set a timeout to close the modal after 5 seconds
-  //     const modalTimeout = setTimeout(() => {
-  //       setShowModal(false);
-  //       setTokenUri("");
-  //       setMintstatus(false);
-  //       setMetadataStatus(false);
-  //       setImageStatus(false);
-  //       setSelectedImage(null);
-  //       setNftDetails({ NftName: "", Description: "" });
-  //     }, 3000);
-  //     Debug && console.log(getNftDetails);
-  //   }
-  // }, [isSuccess]);
+
+  const handleMint = async () => {
+    setMintstatus(false);
+    console.log("smart Account in add nft: ", smartAccount);
+    const readProvider = smartAccount?.provider;
+    const contract = new ethers.Contract(
+      NFT_Contract_Address,
+      NFT_ABI,
+      readProvider,
+    );
+    try {
+      const address = smartAccount?.getSmartAccountAddress();
+      const populatedTxn = await contract?.popopulateTransaction.safeMint(
+        address,
+        tokenUri,
+      );
+
+      const calldata = populatedTxn.data;
+      const tx1 = {
+        to: NFT_Contract_Address,
+        data: calldata,
+      };
+
+      console.log("here before userop");
+      let userOp = await smartAccount?.buildUserOp([tx1]);
+      console.log("userop", { userOp });
+      const biconomyPaymaster =
+        smartAccount?.paymaster as IHybridPaymaster<SponsorUserOperationDto>;
+      console.log(biconomyPaymaster);
+      console.log(smartAccount);
+      let paymasterServiceData: SponsorUserOperationDto = {
+        mode: PaymasterMode.SPONSORED,
+      };
+      console.log("Hello");
+      const paymasterAndDataResponse =
+        await biconomyPaymaster.getPaymasterAndData(
+          userOp,
+          paymasterServiceData,
+        );
+      console.log("Hello2");
+
+      userOp.paymasterAndData = paymasterAndDataResponse.paymasterAndData;
+      console.log("Hello3");
+      const userOpResponse = await smartAccount?.sendUserOp(userOp);
+      console.log("Hello4");
+      console.log("userOpHash", userOpResponse);
+      const { receipt } = await userOpResponse.wait(1);
+      console.log("txHash", receipt.transactionHash);
+      if (userOpResponse) {
+        setMintstatus(true);
+      }
+    } catch (err) {
+      console.error(err);
+      console.log(err);
+      setMintstatus(false);
+    }
+  };
+
+  async function storeData(value: any) {}
+  useEffect(() => {
+    const modalTimeout = setTimeout(() => {
+      setShowModal(false);
+      setTokenUri("");
+      setMintstatus(false);
+      setMetadataStatus(false);
+      setImageStatus(false);
+      setSelectedImage(null);
+      setNftDetails({ NftName: "", Description: "" });
+    }, 3000);
+  }, [Mintstatus === false]);
 
   useEffect(() => {
     if (tokenUri !== "" && Mintstatus === false) {
-      // Call mintNft when tokenUri is not empty and mint status is false
-      mintNft();
+      handleMint();
     }
   }, [tokenUri, Mintstatus]);
 
   return (
     <React.Fragment>
-      {
+      {smartAccount ? (
         <button
           disabled={!isFormValid || showModal}
           className="rounded-lg bg-purple-500 px-4 py-2 font-bold text-white hover:bg-blue-700 disabled:bg-slate-200"
           type="button"
           onClick={() => {
             setShowModal(true);
-            // handleUpload();
+            handleUpload();
           }}
         >
           Mint NFT
         </button>
-      }
+      ) : (
+        <></>
+      )}
       {showModal ? (
         <>
           <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none focus:outline-none">
@@ -215,7 +324,7 @@ export const MintModal: React.FC<MintModalProps> = ({
                   </div>
 
                   <div className="flex flex-row items-center justify-center">
-                    {true ? (
+                    {isError ? (
                       <>
                         <div className="flex flex-row items-center justify-center">
                           <img src="cancel.svg" className="h-8" />
@@ -223,7 +332,9 @@ export const MintModal: React.FC<MintModalProps> = ({
                             Erro on Transaction
                           </p>
                         </div>
-                        <div>{transactionerror}</div>
+                        <div>
+                          "Something went wrong sorry for inconvenience!"
+                        </div>
                       </>
                     ) : Mintstatus ? (
                       <>
@@ -260,19 +371,19 @@ export const MintModal: React.FC<MintModalProps> = ({
                             Loading...
                           </p>
                         </div>
-                        <div>See metamask For Transaction.</div>
+                        <div>Minting NFT for You Wait!.</div>
                       </>
                     )}
                   </div>
 
                   {Mintstatus && MetadataStatus && ImageStatus && (
                     <div className="flex items-center justify-center">
-                      <Link href="/MyNfts" className="text-blue-300 underline">
+                      <Link href="/mynfts" className="text-blue-300 underline">
                         Go to My NFT
                       </Link>
                     </div>
                   )}
-                  {true && (
+                  {isError && (
                     <div className="flex items-center justify-center">
                       <button
                         className="rounded-lg bg-red-500 px-4 py-2 font-bold text-white hover:bg-red-200 disabled:bg-slate-200"

@@ -2,7 +2,6 @@ import z from "zod";
 
 export const createUserSchema = z.object({
   wallet_address: z.string(),
-  balance: z.number(),
   full_name: z.string(),
   email_address: z.string(),
 });

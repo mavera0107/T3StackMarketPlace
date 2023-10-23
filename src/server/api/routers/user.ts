@@ -44,7 +44,6 @@ export const userRouter = createTRPCRouter({
         if (!user) {
           const payload: any = {
             wallet_address: input.wallet_address,
-            balance: input.balance,
             full_name: input.full_name,
             email_address: input.email_address,
           };

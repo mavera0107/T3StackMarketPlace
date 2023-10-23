@@ -3,7 +3,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ethers } from "ethers";
 import { ChainId } from "@biconomy/core-types";
-import { paymaster, bundler, Debug } from "../contants";
+import { paymaster, bundler, Debug } from "../../utils/contants";
 import {
   BiconomySmartAccount,
   BiconomySmartAccountConfig,
@@ -193,7 +193,6 @@ export default function RegisterationPage() {
       console.log(user?.email, user?.name);
       let value: any = {
         wallet_address: address,
-        balance: 0,
         email_address: user?.email,
         full_name: user?.name,
       };

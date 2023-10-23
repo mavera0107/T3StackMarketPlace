@@ -89,7 +89,7 @@ export const nftRouter = createTRPCRouter({
 
   getUserNFTListing: publicProcedure
     .input(getUserNftSchema)
-    .query(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }) => {
       try {
         const response = await ctx.db.nFTData.findMany({
           where: {
@@ -111,15 +111,19 @@ export const nftRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       try {
         console.log(input, "input");
-        let option: any = {};
-        option.where = {
-          token_id: input.token_id,
-        };
-        option.data = {
+        // let option: any = {};
+        const payload = {
           price: input.price,
           is_listed: input.is_listed,
         };
-        const updateResponse = await ctx.db?.nFTData?.update(option);
+
+        const updateResponse = await ctx.db?.nFTData?.update({
+          where: {
+            token_id: input.token_id,
+          },
+          data: payload,
+        });
+
         console.log(updateResponse, "updateResponse");
         return updateResponse;
       } catch (e) {
