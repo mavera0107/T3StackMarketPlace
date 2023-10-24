@@ -7,12 +7,10 @@ import SocialLogin from "@biconomy/web3-auth";
 
 interface smartAccountWeb3 {
   smartAccount: BiconomySmartAccount | undefined;
-  sdkRef: SocialLogin | null;
 }
 
 export const initialState: smartAccountWeb3 = {
   smartAccount: undefined,
-  sdkRef: null,
 };
 
 export const web3SmartAccount = createSlice({
@@ -22,11 +20,8 @@ export const web3SmartAccount = createSlice({
     setSmartAccount: (state, action) => {
       state.smartAccount = action.payload;
     },
-    setSdkRef: (state, action) => {
-      state.sdkRef = action.payload;
-    },
   },
 });
-export const { setSmartAccount, setSdkRef } = web3SmartAccount.actions;
+export const { setSmartAccount } = web3SmartAccount.actions;
 
 export default web3SmartAccount.reducer;

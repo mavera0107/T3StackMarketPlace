@@ -132,43 +132,7 @@ export default function userProfile() {
                   >
                     Save Name
                   </Button>
-                  <div className="mb-6 md:flex md:items-center">
-                    <div className="md:w-1/3">
-                      <label className="mb-1 block pr-4 font-bold text-gray-500 md:mb-0 md:text-right">
-                        Update Email
-                      </label>
-                    </div>
-                    <div className="md:w-2/3">
-                      <input
-                        type="text"
-                        onChange={handleChange}
-                        value={getUserDetails.Email}
-                        name="Email"
-                        placeholder="Insert Your Email"
-                        className="mr-2 w-full appearance-none rounded border-2 border-gray-200 bg-gray-200 px-4 py-2 leading-tight text-gray-700 focus:border-purple-500 focus:bg-white focus:outline-none"
-                        required
-                      />
-                    </div>
-                  </div>
-                  <Button
-                    type="submit"
-                    className="rounded-xl bg-gray-200 hover:bg-green-300"
-                    onClick={UpdateData}
-                  >
-                    Save Email
-                  </Button>
                 </div>
-                {/* <SheetFooter>
-                  <SheetClose asChild>
-                    <Button
-                      type="submit"
-                      className="rounded-xl bg-gray-200 hover:bg-green-300"
-                      onClick={UpdateData}
-                    >
-                      Save changes
-                    </Button>
-                  </SheetClose>
-                </SheetFooter> */}
               </SheetContent>
             </Sheet>
           </CardFooter>

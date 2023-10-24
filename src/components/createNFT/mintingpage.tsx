@@ -2,8 +2,12 @@ import { useState, ChangeEvent, useRef, useEffect } from "react";
 // import "../utils/uploader.css";
 import "react-toastify/dist/ReactToastify.css";
 import { MintModal } from "../Modals/MintModal";
+import { useAppSelector } from "~/redux/store";
 
 function mintingpage() {
+  const smartAccount = useAppSelector(
+    (state) => state.smartAccountSlice.smartAccount,
+  );
   const [isImageSelected, setIsImageSelected] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
 
@@ -146,6 +150,7 @@ function mintingpage() {
         isFormValid={isFormValid}
         getNftDetails={getNftDetails}
         selectedImage={selectedImage}
+        smartAccount={smartAccount}
       />
     </main>
   );

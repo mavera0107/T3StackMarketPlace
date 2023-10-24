@@ -90,6 +90,7 @@ model NFTData {
 // }
 
 // enum NFTAuctionStatus {
+//PENDING
 //     ACTIVE
 //     COMPLETED
 //     CANCELED

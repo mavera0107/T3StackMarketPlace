@@ -164,7 +164,7 @@ const test = () => {
   async function NFTBuy() {
     let value: any = {
       token_id: "1",
-      owner_id: "abbbc34242",
+      owner_id: "65375c08a9ac4f73945d4b4d",
       wallet_address: "0xBFaf3A48281A901Ca8eB0498F9A1296785474141",
     };
 

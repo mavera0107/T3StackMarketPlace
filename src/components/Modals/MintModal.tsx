@@ -6,7 +6,7 @@ import metaData from "~/utils/metadataUploadIpfs";
 import { Debug } from "../../utils/contants";
 import Link from "next/link";
 
-import { RootState, useAppSelector } from "~/redux/store";
+import { RootState, store, useAppSelector } from "~/redux/store";
 import { BiconomySmartAccount } from "@biconomy/account";
 import { ethers } from "ethers";
 import { NFT_Contract_Address, NFT_ABI } from "~/utils/contants";
@@ -18,21 +18,6 @@ import {
 import { useSelector } from "react-redux";
 import { api } from "~/utils/api";
 import { useRouter } from "next/router";
-
-// interface MintModalProps {
-//   selectedImage: File | null | undefined;
-//   getNftDetails: {
-//     NftName: string;
-//     Description: string;
-//   };
-//   isFormValid: boolean;
-//   setSelectedImage: React.Dispatch<
-//     React.SetStateAction<File | null | undefined>
-//   >;
-//   setNftDetails: React.Dispatch<
-//     React.SetStateAction<{ NftName: string; Description: string }>
-//   >;
-// }
 
 interface MintModalProps {
   selectedImage: File | null | undefined;
@@ -47,6 +32,7 @@ interface MintModalProps {
   setNftDetails: React.Dispatch<
     React.SetStateAction<{ NftName: string; Description: string }>
   >;
+  smartAccount: BiconomySmartAccount | undefined;
 }
 
 export const MintModal: React.FC<MintModalProps> = ({
@@ -55,26 +41,20 @@ export const MintModal: React.FC<MintModalProps> = ({
   isFormValid,
   setNftDetails,
   setSelectedImage,
+  smartAccount,
 }: MintModalProps) => {
-  // const smartAccount = useAppSelector(
-  //   (state) => state.smartAccountSlice.smartAccount,
-  // );
   // Access the title prop and use it in your component
-  const [tokenId, setTokenId] = useState("");
   const router = useRouter();
   const [showModal, setShowModal] = useState(false);
   const [isError, setError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { smartAccount } = useSelector(
-    (state: RootState) => state.smartAccountSlice as any,
-  );
-
   const [MetadataStatus, setMetadataStatus] = useState(false);
   const [ImageStatus, setImageStatus] = useState(false);
   const [Mintstatus, setMintstatus] = useState<boolean>(false);
-  const [tokenUri, setTokenUri] = useState<string>("");
+
   const createNFT = api.nft.createNFT.useMutation({
     onSuccess: (res: any) => {
+      console.log(res, "Login result");
       if (res) {
         toast("NFT Created Successfully!", {
           position: "top-right",
@@ -87,7 +67,6 @@ export const MintModal: React.FC<MintModalProps> = ({
           theme: "light",
         });
       }
-      router.push("/");
       setIsLoading(false);
     },
     onError: (err: any) => {
@@ -101,56 +80,30 @@ export const MintModal: React.FC<MintModalProps> = ({
         progress: undefined,
         theme: "light",
       });
+      setError(true);
       setIsLoading(false);
       console.log(err.message, "NFT Creation Error");
     },
   });
 
-  const handleUpload = async () => {
-    const uploadImages = await ImageUploader(
-      selectedImage,
-      getNftDetails.NftName,
-    );
-    if (uploadImages?.status === 200) {
-      setImageStatus(true);
-    }
-    const metadatares = await metaData(
-      getNftDetails.NftName,
-      getNftDetails.Description,
-      uploadImages?.IpfshashImage,
-    );
-    if (metadatares?.status === 200) {
-      setMetadataStatus(true);
-    }
-    let TokenUri = `https://ipfs.io/ipfs/${metadatares?.IpfsHash}`;
-    setTokenUri(TokenUri);
-  };
-
-  function cancelAll() {
-    setShowModal(false);
-    setTokenUri("");
-    setMintstatus(false);
-    setMetadataStatus(false);
-    setImageStatus(false);
-    setSelectedImage(null);
-    setError(false);
-    setNftDetails({ NftName: "", Description: "" });
-  }
-
-  const handleMint = async () => {
+  async function handleMint(tokenURI: any) {
     setMintstatus(false);
     console.log("smart Account in add nft: ", smartAccount);
-    const readProvider = smartAccount?.provider;
+    const readProvider = smartAccount.provider;
     const contract = new ethers.Contract(
-      NFT_Contract_Address,
-      NFT_ABI,
+      NFT_CONTRACT_ADDRESS,
+      ERC721ABI,
       readProvider,
     );
     try {
-      const address = smartAccount?.getSmartAccountAddress();
-      const populatedTxn = await contract?.popopulateTransaction.safeMint(
-        address,
-        tokenUri,
+      let tokenId = await contract._tokenIds();
+      console.log("result: ", tokenId.toNumber());
+      tokenId = tokenId.toNumber() + 1;
+      console.log(tokenId);
+      let isUser: any = JSON.parse(localStorage.getItem("user") as any);
+      const populatedTxn = await contract.popopulateTransaction.safeMint(
+        isUser.wallet_address,
+        tokenURI,
       );
 
       const calldata = populatedTxn.data;
@@ -169,36 +122,121 @@ export const MintModal: React.FC<MintModalProps> = ({
       let paymasterServiceData: SponsorUserOperationDto = {
         mode: PaymasterMode.SPONSORED,
       };
-      console.log("Hello");
+      console.log("check...");
       const paymasterAndDataResponse =
         await biconomyPaymaster.getPaymasterAndData(
           userOp,
           paymasterServiceData,
         );
-      console.log("Hello2");
+      console.log("Hello2", paymasterAndDataResponse);
 
       userOp.paymasterAndData = paymasterAndDataResponse.paymasterAndData;
       console.log("Hello3");
       const userOpResponse = await smartAccount?.sendUserOp(userOp);
-      console.log("Hello4");
+      console.log("Hello4", userOpResponse);
       console.log("userOpHash", userOpResponse);
       const { receipt } = await userOpResponse.wait(1);
       console.log("txHash", receipt.transactionHash);
       if (userOpResponse) {
         setMintstatus(true);
       }
+      return tokenId;
     } catch (err) {
       console.error(err);
       console.log(err);
+      setError(true);
       setMintstatus(false);
     }
-  };
+  }
 
-  async function storeData(value: any) {}
+  // async function onSubmit(values: any) {
+  //   console.log(values);
+  //   setIsLoading(true);
+  //   if ((values.NftName !== "", values.Description !== "")) {
+  //     try {
+  //       let isUser: any = JSON.parse(localStorage.getItem("user") as any);
+
+  //       const uploadImages = await ImageUploader(
+  //         selectedImage,
+  //         getNftDetails.NftName,
+  //       );
+  //       if (uploadImages?.status === 200) {
+  //         setImageStatus(true);
+  //       }
+
+  //       const metadatares = await metaData(
+  //         getNftDetails.NftName,
+  //         getNftDetails.Description,
+  //         uploadImages?.IpfshashImage,
+  //       );
+
+  //       if (metadatares?.status === 200) {
+  //         setMetadataStatus(true);
+  //       }
+
+  //       let TokenUri = await `https://ipfs.io/ipfs/${metadatares?.IpfsHash}`;
+  //       let ImageUrl =
+  //         await `https://ipfs.io/ipfs/${uploadImages?.IpfshashImage}`;
+
+  //       let tokenId = await handleMint(TokenUri);
+
+  //       const payload = {
+  //         owner_id: isUser.id,
+  //         nft_owner: isUser.wallet_address,
+  //         nft_creator: isUser.wallet_address,
+  //         price: "0",
+  //         ipfs_url: ImageUrl,
+  //         name: getNftDetails.NftName,
+  //         description: getNftDetails.Description,
+  //         token_id: tokenId,
+  //         is_listed: false,
+  //       };
+
+  //       let response = await createNFT.mutateAsync(payload);
+  //       console.log("Response", response);
+
+  //       if (response) {
+  //         toast.success("Signin Successfully!", {
+  //           position: "top-right",
+  //           autoClose: 2000,
+  //           hideProgressBar: false,
+  //           closeOnClick: true,
+  //           pauseOnHover: true,
+  //           draggable: true,
+  //           progress: undefined,
+  //           theme: "light",
+  //         });
+  //       }
+  //     } catch (error: any) {
+  //       console.log("i am in wrong condition");
+  //       toast.error(error, {
+  //         position: "top-right",
+  //         autoClose: 2000,
+  //         hideProgressBar: false,
+  //         closeOnClick: true,
+  //         pauseOnHover: true,
+  //         draggable: true,
+  //         progress: undefined,
+  //         theme: "light",
+  //       });
+  //       setIsLoading(false);
+  //     }
+  //   }
+  // }
+
+  function cancelAll() {
+    setShowModal(false);
+    setMintstatus(false);
+    setMetadataStatus(false);
+    setImageStatus(false);
+    setSelectedImage(null);
+    setError(false);
+    setNftDetails({ NftName: "", Description: "" });
+  }
+
   useEffect(() => {
     const modalTimeout = setTimeout(() => {
       setShowModal(false);
-      setTokenUri("");
       setMintstatus(false);
       setMetadataStatus(false);
       setImageStatus(false);
@@ -206,12 +244,6 @@ export const MintModal: React.FC<MintModalProps> = ({
       setNftDetails({ NftName: "", Description: "" });
     }, 3000);
   }, [Mintstatus === false]);
-
-  useEffect(() => {
-    if (tokenUri !== "" && Mintstatus === false) {
-      handleMint();
-    }
-  }, [tokenUri, Mintstatus]);
 
   return (
     <React.Fragment>
@@ -222,7 +254,10 @@ export const MintModal: React.FC<MintModalProps> = ({
           type="button"
           onClick={() => {
             setShowModal(true);
-            handleUpload();
+            // onSubmit(getNftDetails);
+            handleMint(
+              "https://ipfs.io/ipfs/QmaCBeTkAxF5689tGN1xk4HQ11Dw9J5sD1xc1sfJfZABFg",
+            );
           }}
         >
           Mint NFT
@@ -378,7 +413,7 @@ export const MintModal: React.FC<MintModalProps> = ({
 
                   {Mintstatus && MetadataStatus && ImageStatus && (
                     <div className="flex items-center justify-center">
-                      <Link href="/mynfts" className="text-blue-300 underline">
+                      <Link href="" className="text-blue-300 underline">
                         Go to My NFT
                       </Link>
                     </div>
