@@ -66,7 +66,20 @@ import {
 // };
 
 // export default Card;
-const Card = ({ nft }) => {
+
+// Define the interface for the 'nft' prop
+interface NFT {
+  image: string;
+  title: string;
+  artist: string;
+  price: number;
+}
+
+interface CardProps {
+  nft: NFT;
+}
+
+const Card: React.FC<CardProps> = ({ nft }) => {
   const ethValue = 1799.0; // Current value of ETH in USD
 
   return (
