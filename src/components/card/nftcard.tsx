@@ -79,7 +79,7 @@ interface CardProps {
   nft: NFT;
 }
 
-const Card: React.FC<CardProps> = ({ nft }) => {
+const Card: React.FC<CardProps> = ({ nft}) => {
   const ethValue = 1799.0; // Current value of ETH in USD
 
   return (

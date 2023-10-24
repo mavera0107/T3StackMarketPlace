@@ -91,6 +91,7 @@ export const MintModal: React.FC<MintModalProps> = ({
     setMintstatus(false);
     console.log("smart Account in add nft: ", smartAccount);
     const readProvider = await smartAccount?.provider;
+    console.log("RPC PROVIDER", readProvider);
     const contract = new ethers.Contract(
       NFT_Contract_Address,
       NFT_ABI,
