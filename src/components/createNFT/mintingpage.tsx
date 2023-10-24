@@ -1,8 +1,6 @@
 import { useState, ChangeEvent, useRef, useEffect } from "react";
-// import "../utils/uploader.css";
 import "react-toastify/dist/ReactToastify.css";
 import { MintModal } from "../Modals/MintModal";
-import { useAppSelector } from "~/redux/store";
 
 function mintingpage() {
   const [isImageSelected, setIsImageSelected] = useState(false);

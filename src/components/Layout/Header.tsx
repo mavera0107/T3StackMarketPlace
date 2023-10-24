@@ -33,7 +33,7 @@ export default function Header() {
               <Link href="/mintNFT">Mint NFT</Link>
             </a>
             <a className="mr-5 hover:text-gray-900">
-              <Link href="/MyNfts">My NFTS</Link>
+              <Link href="/mynfts">My NFTS</Link>
             </a>
             <a className="mr-5 hover:text-gray-900">
               <Link href="/ListedNfts">Listed Nfts</Link>

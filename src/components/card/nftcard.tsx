@@ -5,6 +5,8 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "../ui/ui/hover-card";
+import { Button } from "../ui/ui/button";
+import { ListModal } from "../Modals/ListModal";
 
 // const Card = ({ nft }) => {
 //   const ethValue = 1964.82; // Current value of ETH in USD
@@ -69,53 +71,66 @@ import {
 
 // Define the interface for the 'nft' prop
 interface NFT {
-  image: string;
-  title: string;
-  artist: string;
-  price: number;
+  id: string;
+  nft_creator: string | null;
+  nft_owner: string | null;
+  price: string | null;
+  ipfs_url: string | null;
+  name: string | null;
+  description: string | null;
+  token_id: string | null;
+  is_listed: boolean | null;
+  created_at: Date;
+  updated_at: Date;
+  owner_id: string;
 }
 
 interface CardProps {
   nft: NFT;
 }
 
-const Card: React.FC<CardProps> = ({ nft}) => {
-  const ethValue = 1799.0; // Current value of ETH in USD
-
+const Card: React.FC<CardProps> = ({ nft }) => {
   return (
-    <div className="border-grey-400 box-border rounded-lg border  p-4 shadow-lg hover:shadow-2xl ">
+    <div className=" border-grey-400 box-border flex h-full flex-col  items-center justify-center rounded-lg border p-4 shadow-lg hover:shadow-2xl">
       <img
-        src={nft.image}
-        alt={nft.title}
-        className="mb-4 block h-[200px] w-48 rounded-lg object-cover"
+        src={nft.ipfs_url?.toString()}
+        alt={nft.name?.toString()}
+        className="mb-4 block h-[200px] w-48 rounded-lg object-fill"
       />
-      <h2 className="mb-2 text-xl font-bold">{nft.title}</h2>
-      <p className="text-gray-500">{nft.artist}</p>
-      <HoverCard>
-        <div className="flex">
-          <HoverCardTrigger>
-            <p className="mt-2 text-lg font-semibold">{nft.price} ETH</p>
-          </HoverCardTrigger>
-        </div>
-        <HoverCardContent className="w-40">
-          <div className="flex justify-between space-x-4">
-            <div className="space-y-1">
-              <p className="text-sm">
-                {Math.round(ethValue * nft.price).toLocaleString("en-US", {
-                  style: "currency",
-                  currency: "USD",
-                })}
-              </p>
-              <div className="flex items-center pt-2">
-                <span className="text-xs text-muted-foreground">
-                  Updated on 25 May 2023
-                </span>
+      <h2 className="mb-2 text-xl font-bold">{nft.description}</h2>
+      <p className="text-gray-500">{nft.name}</p>
+      {nft.is_listed ? <></> : <ListModal tokenId={String(nft.token_id)} />}
+      {nft.is_listed ? (
+        <HoverCard>
+          <div className="flex">
+            <HoverCardTrigger>
+              <p className="mt-2 text-lg font-semibold">Hover for Details</p>
+            </HoverCardTrigger>
+          </div>
+          <HoverCardContent className="w-40 bg-white">
+            <div className="flex justify-between space-x-4">
+              <div className="space-y-1">
+                <p className="text-sm">
+                  {Math.round(Number(nft.price?.toString())).toLocaleString(
+                    "en-US",
+                    {
+                      style: "currency",
+                      currency: "USD",
+                    },
+                  )}
+                </p>
+                <div className="flex items-center pt-2">
+                  <span className="text-xs text-muted-foreground">
+                    Created on 24 OCT 2023
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
-        </HoverCardContent>
-      </HoverCard>
-      {/* Additional details or actions */}
+          </HoverCardContent>
+        </HoverCard>
+      ) : (
+        <></>
+      )}
     </div>
   );
 };

@@ -21,7 +21,7 @@ export const nftRouter = createTRPCRouter({
     });
   }),
 
-  me: publicProcedure.query(({ ctx }) => {
+  modal: publicProcedure.query(({ ctx }) => {
     return ctx.db.nFTData;
   }),
 
