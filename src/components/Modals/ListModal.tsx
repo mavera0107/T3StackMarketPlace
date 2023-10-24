@@ -2,12 +2,23 @@ import React, { ChangeEvent, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { api } from "~/utils/api";
-import { Debug } from "~/utils/contants";
+import { Debug, NFT_ABI, NFT_Contract_Address } from "~/utils/contants";
 import { Button } from "../ui/ui/button";
+import { useSelector } from "react-redux";
+import { RootState } from "~/redux/store";
+import { ethers } from "ethers";
+import {
+  IHybridPaymaster,
+  PaymasterMode,
+  SponsorUserOperationDto,
+} from "@biconomy/paymaster";
 interface nftData {
   tokenId: string; // Change the type of projectID to match your data type
 }
 export const ListModal: React.FC<nftData> = ({ tokenId }) => {
+  const { smartAccount } = useSelector(
+    (state: RootState) => state.smartAccountSlice as any,
+  );
   const [showModal, setShowModal] = useState(false);
   const [showprice, setPrice] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -55,29 +66,86 @@ export const ListModal: React.FC<nftData> = ({ tokenId }) => {
   };
 
   async function handleList() {
-    let value: any = {
-      token_id: tokenId,
-      price: showprice,
-      is_listed: true,
-    };
+    try {
+      setIsLoading(false);
+      console.log("smart Account in add nft: ", smartAccount);
 
-    let response = await ListNFT.mutateAsync(value);
-    console.log("Response", response);
+      if (!smartAccount) {
+        // Handle the case when smartAccount is undefined
+        throw new Error("smartAccount is undefined");
+      }
 
-    // if (response) {
-    //   toast.success("Listed Successfully!", {
-    //     position: "top-right",
-    //     autoClose: 2000,
-    //     hideProgressBar: false,
-    //     closeOnClick: true,
-    //     pauseOnHover: true,
-    //     draggable: true,
-    //     progress: undefined,
-    //     theme: "light",
-    //   });
-    // }
+      const readProvider = await smartAccount.provider;
+      console.log("RPC PROVIDER", readProvider);
+      const contract = new ethers.Contract(
+        NFT_Contract_Address,
+        NFT_ABI,
+        readProvider,
+      );
+
+      // Check if contract.populateTransaction and safeMint are defined
+      if (
+        !contract.populateTransaction ||
+        !contract.populateTransaction.listNft
+      ) {
+        throw new Error("safeMint is not defined");
+      }
+      const populatedTxn = await contract.populateTransaction.listNft(
+        tokenId,
+        showprice,
+      );
+
+      const calldata = populatedTxn.data;
+      const tx1 = {
+        to: NFT_Contract_Address,
+        data: calldata,
+      };
+
+      console.log("here before userop");
+      let userOp = await smartAccount?.buildUserOp([tx1]);
+      console.log("userop", { userOp });
+      const biconomyPaymaster =
+        smartAccount?.paymaster as IHybridPaymaster<SponsorUserOperationDto>;
+      console.log(biconomyPaymaster);
+      console.log(smartAccount);
+      let paymasterServiceData: SponsorUserOperationDto = {
+        mode: PaymasterMode.SPONSORED,
+      };
+      console.log("check...");
+      const paymasterAndDataResponse =
+        await biconomyPaymaster.getPaymasterAndData(
+          userOp,
+          paymasterServiceData,
+        );
+      console.log("Hello2", paymasterAndDataResponse);
+
+      userOp.paymasterAndData = paymasterAndDataResponse.paymasterAndData;
+      console.log("Hello3");
+      const userOpResponse = await smartAccount?.sendUserOp(userOp);
+      console.log("Hello4", userOpResponse);
+      console.log("userOpHash", userOpResponse);
+      const { receipt } = await userOpResponse.wait(1);
+      console.log("txHash", receipt.transactionHash);
+
+      let value: any = {
+        token_id: tokenId,
+        price: showprice,
+        is_listed: true,
+      };
+
+      let response = await ListNFT.mutateAsync(value);
+      console.log("Response", response);
+      if (userOpResponse) {
+        setIsLoading(true);
+      }
+      return tokenId;
+    } catch (err) {
+      console.error(err);
+      console.log(err);
+      setError(true);
+      setIsLoading(false);
+    }
   }
-
   return (
     <>
       <Button
@@ -130,7 +198,7 @@ export const ListModal: React.FC<nftData> = ({ tokenId }) => {
                   <Button
                     className="linear hover:bg-grey-200 rounded-[20px] bg-red-400 px-4 py-2 text-base font-medium text-black transition duration-200"
                     type="button"
-                    // disabled={isLoading}
+                    disabled={isLoading}
                     onClick={() => setShowModal(false)}
                   >
                     Close

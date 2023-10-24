@@ -31,10 +31,11 @@ const NFTListing = () => {
       // Perform localStorage action
       let isUser: any = JSON.parse(localStorage.getItem("user") as any);
       // const data = await UserNFTListing.mutateAsync({});
-      console.log(isUser.id, "Listing");
+      // console.log(isUser.id, "Listing");
       // const data = await UserNFTListing.mutateAsync({ isUser?.id });
       const data = await UserNFTListing.mutateAsync({
-        owner_id: isUser.id,
+        // owner_id: isUser.id,
+        owner_id: "65375c08a9ac4f73945d4b4d",
       });
       console.log(data);
       setArrayOfArrays(data);
