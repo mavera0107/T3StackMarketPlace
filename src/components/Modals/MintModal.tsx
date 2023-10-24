@@ -6,8 +6,7 @@ import metaData from "~/utils/metadataUploadIpfs";
 import { Debug } from "../../utils/contants";
 import Link from "next/link";
 
-import { RootState, store, useAppSelector } from "~/redux/store";
-import { BiconomySmartAccount } from "@biconomy/account";
+import { RootState } from "~/redux/store";
 import { ethers } from "ethers";
 import { NFT_Contract_Address, NFT_ABI } from "~/utils/contants";
 import {
@@ -32,7 +31,6 @@ interface MintModalProps {
   setNftDetails: React.Dispatch<
     React.SetStateAction<{ NftName: string; Description: string }>
   >;
-  smartAccount: BiconomySmartAccount | undefined;
 }
 
 export const MintModal: React.FC<MintModalProps> = ({
@@ -41,9 +39,12 @@ export const MintModal: React.FC<MintModalProps> = ({
   isFormValid,
   setNftDetails,
   setSelectedImage,
-  smartAccount,
 }: MintModalProps) => {
+  const { smartAccount } = useSelector(
+    (state: RootState) => state.smartAccountSlice as any,
+  );
   // Access the title prop and use it in your component
+
   const router = useRouter();
   const [showModal, setShowModal] = useState(false);
   const [isError, setError] = useState(false);
@@ -89,10 +90,10 @@ export const MintModal: React.FC<MintModalProps> = ({
   async function handleMint(tokenURI: any) {
     setMintstatus(false);
     console.log("smart Account in add nft: ", smartAccount);
-    const readProvider = smartAccount.provider;
+    const readProvider = await smartAccount?.provider;
     const contract = new ethers.Contract(
-      NFT_CONTRACT_ADDRESS,
-      ERC721ABI,
+      NFT_Contract_Address,
+      NFT_ABI,
       readProvider,
     );
     try {

@@ -217,7 +217,7 @@ export default function RegisterationPage() {
       localStorage.setItem("user", JSON.stringify(response));
       dispatch(setSmartAccount(smartAccount));
       setTimeout(() => {
-        router.push("/test"); // Replace '/test' with your desired route
+        router.push("/mintNFT"); // Replace '/test' with your desired route
       }, 2000);
     } catch (e) {
       console.error(e);
