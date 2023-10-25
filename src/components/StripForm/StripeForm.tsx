@@ -8,17 +8,19 @@ import {
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { api } from "~/utils/api";
-import { Button } from "../ui/ui/button";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "../ui/ui/dialog";
-
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  background,
+  Button,
+  useDisclosure,
+  useToast,
+} from "@chakra-ui/react";
 import { useSelector } from "react-redux";
 import { RootState } from "~/redux/store";
 import {
@@ -27,11 +29,14 @@ import {
   SponsorUserOperationDto,
   PaymasterFeeQuote,
 } from "@biconomy/paymaster";
-import { Debug, NFT_ABI, NFT_Contract_Address } from "~/utils/contants";
 
+// import {
+//   NFT_MARKET_ADDRESS,
+//   NFTMarketABI,
+//   NFT_CONTRCAT_ADDRESS,
+// } from "../constants";
 import { ethers } from "ethers";
 import { any } from "zod";
-import { toast } from "react-toastify";
 
 const StripeForm = ({
   isModal,
@@ -48,10 +53,11 @@ const StripeForm = ({
 
   console.log(nft, "1 nft record");
   const elements: any = useElements();
+  const toast = useToast();
   const stripe: any = useStripe();
-  const [isLoading, setIsLoading] = useState(false);
   const [btnDisabled, setBtnDisabled] = useState(false);
-
+  const { onOpen, onClose } = useDisclosure();
+  const [mintTx, setMintTx] = useState("");
   const [user, setUser] = useState({
     id: "",
     wallet_address: "",
@@ -62,42 +68,19 @@ const StripeForm = ({
     setUser(isUser);
   }, []);
 
-  console.log(nft, "nft.store_id");
+  console.log(nft[0].price, "nft.store_id");
+  // Get Data
+  // const { data: getUserData, userReftch } = trpc.user?.getUserData.useQuery(
+  //   { id: nft?.store_id },
+  //   {
+  //     refetchOnWindowFocus: true,
+  //     enabled: nft?.store_id ? true : false,
+  //   }
+  // );
+  // console.log(getUserData?.user?.balance, "getUserData");
 
   console.log(user);
-  const updateNFTs = api.nft.updateNFTListing.useMutation({
-    onSuccess: (res: any) => {
-      console.log(res, "Login result");
-      refetch();
-      if (res) {
-        toast.success("NFT Listing Successfully!", {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-      }
-      setIsLoading(false);
-    },
-    onError: (err: any) => {
-      toast.error(err, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-      setIsLoading(false);
-      console.log(err.message, "NFT Creation Error");
-    },
-  });
+  // const updateNFTs = api.nft.updateNFTListing.useMutation({});
   // const updateUserBalance = trpc.user.updateUser.useMutation({});
 
   const handleSubmit = async (e: any) => {
@@ -114,20 +97,17 @@ const StripeForm = ({
         setBtnDisabled(false);
       }, 2000);
 
-      toast.error(error["message"], {
+      toast({
+        title: error["message"],
+        status: "error",
+        isClosable: true,
         position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
+        duration: 3000,
       });
     } else {
       const obj = {
         token: token.id,
-        price: +nft.price,
+        price: +nft[0].price,
       };
       console.log(obj, "object in stripe form");
 
@@ -152,9 +132,10 @@ const StripeForm = ({
 
         // if (transferResponse?.sucess) {
         //   const updatedObj = {
-        //     price: nft.price,
-        //     token_id: nft.token_id,
-        //     is_listed: false,
+        //     nft_id: nft.id,
+        //     store_id: user?.id,
+        //     nft_owner: user?.wallet_address,
+        //     status: false,
         //   };
         // const updateRes = await updateNFTs.mutateAsync(updatedObj);
         // console.log(updateRes, "updatec Nft response");
@@ -163,14 +144,14 @@ const StripeForm = ({
 
         setBankTransfer(false);
 
-        //   toast({
-        //     title: "Transaction Completed",
-        //     description: transferResponse.transaction_hash,
-        //     status: "success",
-        //     isClosable: true,
-        //     position: "top-right",
-        //     duration: 3000,
-        //   });
+        // toast({
+        //   title: "Transaction Completed",
+        //   description: transferResponse.transaction_hash,
+        //   status: "success",
+        //   isClosable: true,
+        //   position: "top-right",
+        //   duration: 3000,
+        // });
         //   refetch();
         //   return { sucess: true };
         // } else {
@@ -254,7 +235,7 @@ const StripeForm = ({
   //     const userOpResponse = await smartAccount.sendUserOp(userOp);
   //     const { receipt } = await userOpResponse.wait(1);
   //     console.log("txHash..", receipt);
-  //     settransferTx(receipt.transactionHash);
+  //     setMintTx(receipt.transactionHash);
   //     return { sucess: true, transaction_hash: receipt.transactionHash };
   //   } catch (error) {
   //     console.log(error);
@@ -267,31 +248,57 @@ const StripeForm = ({
   };
 
   return (
-    <Dialog>
-      <DialogContent>
-        <DialogHeader>Checkout</DialogHeader>
-        <DialogTrigger onClick={handleCloseAction} />
-        <DialogContent id="payment-form">
+    <Modal
+      isOpen={isModal}
+      onClose={() => {
+        setIsModal(false);
+      }}
+    >
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>Checkout</ModalHeader>
+        <ModalCloseButton onClick={handleCloseAction} />
+        <ModalBody id="payment-form">
           <form>
             <CardElement />
           </form>
-        </DialogContent>
-        <DialogFooter>
-          <Button size={"sm"} onClick={handleCloseAction}>
+        </ModalBody>
+        <ModalFooter>
+          <Button
+            colorScheme="blue"
+            mr={3}
+            size={"sm"}
+            onClick={handleCloseAction}
+          >
             Close
           </Button>
           {btnDisabled ? (
-            <Button color="temp-10" type="submit">
+            <Button
+              isLoading
+              loadingText="Buy NFT"
+              spinnerPlacement="start"
+              bg="green-10"
+              color="temp-10"
+              borderRadius={5}
+              type="submit"
+            >
               Buy NFT
             </Button>
           ) : (
-            <Button color="temp-10" type="submit" onClick={handleSubmit}>
+            <Button
+              bg="green-10"
+              color="temp-10"
+              borderRadius={5}
+              type="submit"
+              onClick={handleSubmit}
+            >
               Buy NFT
             </Button>
           )}
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
   );
 };
+
 export default StripeForm;
