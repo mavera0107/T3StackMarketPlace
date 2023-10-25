@@ -21,6 +21,17 @@ export const nftRouter = createTRPCRouter({
     });
   }),
 
+  onlylisted: publicProcedure.query(({ ctx }) => {
+    return ctx.db.nFTData.findMany({
+      where:{
+        is_listed:true
+      },
+      orderBy: {
+        created_at: "asc",
+      },
+    });
+  }),
+
   modal: publicProcedure.query(({ ctx }) => {
     return ctx.db.nFTData;
   }),
@@ -89,7 +100,7 @@ export const nftRouter = createTRPCRouter({
 
   getUserNFTListing: publicProcedure
     .input(getUserNftSchema)
-    .mutation(async ({ ctx, input }) => {
+    .query(async ({ ctx, input }) => {
       try {
         const response = await ctx.db.nFTData.findMany({
           where: {

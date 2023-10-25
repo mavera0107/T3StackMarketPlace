@@ -13,9 +13,10 @@ import {
   SponsorUserOperationDto,
 } from "@biconomy/paymaster";
 interface nftData {
-  tokenId: string; // Change the type of projectID to match your data type
+  tokenId: string;
+  refetch: () => void; // Change the type of projectID to match your data type
 }
-export const ListModal: React.FC<nftData> = ({ tokenId }) => {
+export const ListModal: React.FC<nftData> = ({ tokenId, refetch }) => {
   const { smartAccount } = useSelector(
     (state: RootState) => state.smartAccountSlice as any,
   );
@@ -27,8 +28,10 @@ export const ListModal: React.FC<nftData> = ({ tokenId }) => {
   const ListNFT = api.nft.updateNFTListing.useMutation({
     onSuccess: (res: any) => {
       console.log(res, "Login result");
+      refetch();
+      setShowModal(false);
       if (res) {
-        toast("NFT Listing Successfully!", {
+        toast.success("NFT Listing Successfully!", {
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
