@@ -12,6 +12,7 @@ import {
   PaymasterMode,
   SponsorUserOperationDto,
 } from "@biconomy/paymaster";
+import LoadingModal from "./Loader";
 interface nftData {
   tokenId: string;
   refetch: () => void; // Change the type of projectID to match your data type
@@ -152,7 +153,7 @@ export const ListModal: React.FC<nftData> = ({ tokenId, refetch }) => {
   return (
     <>
       <Button
-        className="linear rounded-[20px] bg-gray-300 px-4 py-2 text-base font-medium text-black transition duration-200 hover:bg-green-200 active:bg-yellow-200"
+        className="linear rounded-xl bg-blue-300 px-4 py-2 text-base font-medium text-black transition duration-200 hover:bg-green-200 active:bg-yellow-200"
         type="button"
         onClick={() => setShowModal(true)}
       >
@@ -212,27 +213,16 @@ export const ListModal: React.FC<nftData> = ({ tokenId, refetch }) => {
                     onClick={() => handleList()}
                     disabled={isLoading}
                   >
-                    {isLoading ? "Please Wait" : "List NFT"}
+                    {isLoading ? (
+                      <LoadingModal h2="Minting, Please be patient" />
+                    ) : (
+                      "List NFT"
+                    )}
                   </Button>
                 </div>
               </div>
             </div>
           </div>
-          {isError ? (
-            <div>
-              <p className="bg-red-500">
-                Error occurred : Sorry For Inconvenience!
-              </p>
-              <Button
-                className="bg-red-400"
-                onClick={() => setShowModal(false)}
-              >
-                Close
-              </Button>
-            </div>
-          ) : (
-            <></>
-          )}
         </>
       ) : null}
       <ToastContainer

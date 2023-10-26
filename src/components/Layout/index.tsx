@@ -197,11 +197,11 @@ const Layout = ({ children }: { children: ReactNode }) => {
 
   return (
     <Fragment>
-      <Header />
+      {user?.id ? <Header account={user} /> : <></>}
       <Fragment>
         <main className="mb-32">{children}</main>
       </Fragment>
-      <Footer />
+      {user?.id ? <Footer /> : <></>}
     </Fragment>
   );
 };

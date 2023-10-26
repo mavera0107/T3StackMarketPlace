@@ -1,119 +1,67 @@
 import React, { useEffect, useState } from "react";
-import {
-  useStripe,
-  useElements,
-  PaymentElement,
-  CardElement,
-} from "@stripe/react-stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
-import { api } from "~/utils/api";
-import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-  background,
-  Button,
-  useDisclosure,
-  useToast,
-  Stack,
-  Text,
-  Flex,
-  Box,
-} from "@chakra-ui/react";
+import { Button } from "../ui/ui/button";
+
 import StripeForm from "../StripForm/StripeForm";
-// import BbcForm from "./Modals/BbcForm";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "~/components/ui/ui/dialog";
 
 const PaymentMethods = ({ isModal, setIsModal, nft, stripe, refetch }: any) => {
   console.log(nft, "1 nft record");
-  // const elements = useElements();
-  const toast = useToast();
-  // const stripe = useStripe();
-  const [btnDisabled, setBtnDisabled] = useState(false);
-  const [bankTransfer, setBankTransfer] = useState(false);
-  const [bbcTransfer, setBbcTransfer] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [showStripeForm, setShowStripeForm] = useState(false); // Initialize to false
 
-  const { onOpen, onClose } = useDisclosure();
+  const openDialog = () => {
+    setIsDialogOpen(true);
+    setShowStripeForm(true); // Set to true when opening the dialog
+  };
 
-  const handlePayment = (type: any) => {
-    if (type === "bank") {
-      setBankTransfer(true);
-    }
+  const closeDialog = () => {
+    setIsDialogOpen(false);
+    setShowStripeForm(false);
   };
 
   return (
-    <Modal
-      isOpen={isModal}
-      onClose={() => {
-        setIsModal(false);
-      }}
-    >
-      <ModalOverlay />
-      <ModalContent bg="#f5f5f5">
-        <ModalHeader>Payment Methods</ModalHeader>
-        <ModalCloseButton
-          onClick={() => {
-            setIsModal(false);
-          }}
-        />
-        <ModalBody>
-          <Stack>
-            <Stack
-              onClick={() => handlePayment("bank")}
-              bg="#ffffff"
-              h={120}
-              cursor={"pointer"}
-              borderLeftColor={"#3182ce"}
-              borderWidth={5}
-              borderTop="none"
-              borderRight="none"
-              borderBottom="none"
-              borderRadius={5}
-              boxShadow={"md"}
-            >
-              <Flex justify="center" align="center" h="100%">
-                <Box>
-                  <Text fontSize="xl" textAlign="center">
-                    BANK TRANSFER
-                  </Text>
-                </Box>
-              </Flex>
-            </Stack>
-          </Stack>
-        </ModalBody>
-        <ModalFooter>
+    <>
+      <Dialog>
+        <DialogTrigger asChild>
           <Button
-            colorScheme="blue"
-            mr={3}
-            size={"sm"}
-            onClick={() => {
-              setIsModal(false);
-            }}
+            variant="default"
+            className="rounded-xl bg-blue-400"
+            onClick={openDialog}
           >
-            Close
+            Payment Method
           </Button>
-        </ModalFooter>
-
-        {bankTransfer ? (
-          <Elements stripe={stripe}>
-            <StripeForm
-              isModal={isModal}
-              setIsModal={setIsModal}
-              nft={nft}
-              bankTransfer={bankTransfer}
-              setBankTransfer={setBankTransfer}
-              refetch={refetch}
-            />
-          </Elements>
-        ) : (
-          <></>
+        </DialogTrigger>
+        {isDialogOpen && (
+          <DialogContent className="bg-white sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Payment Methods</DialogTitle>
+            </DialogHeader>
+            <DialogFooter>
+              {showStripeForm && (
+                <div className="mt-3">
+                  <Elements stripe={stripe}>
+                    <StripeForm
+                      isModal={isModal}
+                      setIsModal={setIsModal}
+                      nft={nft}
+                      refetch={refetch}
+                    />
+                  </Elements>
+                </div>
+              )}
+            </DialogFooter>
+          </DialogContent>
         )}
-      </ModalContent>
-    </Modal>
+      </Dialog>
+    </>
   );
 };
-
 export default PaymentMethods;

@@ -6,6 +6,7 @@ import {
   BuyNFTSchema,
   getNftSchema,
   getUserNftSchema,
+  getNFTByIdSchema,
 } from "../../../schema/nft";
 import { TRPCError } from "@trpc/server";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
@@ -21,10 +22,10 @@ export const nftRouter = createTRPCRouter({
     });
   }),
 
-  onlylisted: publicProcedure.query(({ ctx }) => {
+  getNFTListing: publicProcedure.query(({ ctx }) => {
     return ctx.db.nFTData.findMany({
-      where:{
-        is_listed:true
+      where: {
+        is_listed: true,
       },
       orderBy: {
         created_at: "asc",
@@ -79,13 +80,13 @@ export const nftRouter = createTRPCRouter({
       }
     }),
 
-  getNFTListing: publicProcedure
-    .input(getNftSchema)
+  getUserNFTs: publicProcedure
+    .input(getUserNftSchema)
     .query(async ({ ctx, input }) => {
       try {
         const response = await ctx.db.nFTData.findMany({
           where: {
-            is_listed: true,
+            owner_id: input.owner_id,
           },
         });
         return response;
@@ -98,16 +99,16 @@ export const nftRouter = createTRPCRouter({
       }
     }),
 
-  getUserNFTListing: publicProcedure
-    .input(getUserNftSchema)
+  getNFTById: publicProcedure
+    .input(getNFTByIdSchema)
     .query(async ({ ctx, input }) => {
       try {
-        const response = await ctx.db.nFTData.findMany({
+        const response = await ctx.db.nFTData.findUnique({
           where: {
-            owner_id: input.owner_id,
+            id: input.id,
           },
         });
-        return response;
+        return { response };
       } catch (error: any) {
         console.log("data error", error);
         throw new TRPCError({

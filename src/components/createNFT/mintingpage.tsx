@@ -8,8 +8,6 @@ function mintingpage() {
 
   //showing user Selected Image
   const [selectedImage, setSelectedImage] = useState<File | null>(); // To store the selected image URL
-  //storing input data
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
   //IMAGE nft name
   const [getNftDetails, setNftDetails] = useState({
     NftName: "",

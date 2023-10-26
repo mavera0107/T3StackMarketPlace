@@ -1,40 +1,40 @@
 import React, { useEffect, useState } from "react";
 import { api } from "~/utils/api";
-import Card from "../card/nftcard";
+import NFTCard from "../card/nftcard"; // Assuming the Card component is named NFTCard
+import { Button } from "../ui/ui/button";
 
-// interface NFT {
-//   id: string;
-//   nft_creator: string | null;
-//   nft_owner: string | null;
-//   price: string | null;
-//   ipfs_url: string | null;
-//   name: string | null;
-//   description: string | null;
-//   token_id: string | null;
-//   is_listed: boolean | null;
-//   created_at: Date;
-//   updated_at: Date;
-//   owner_id: string;
-// }
+const MyNFTs = () => {
+  const [user, setUser] = useState<any>({
+    id: "", // Default value for email
+  });
 
-const NFTListing = () => {
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const isUser = localStorage.getItem("user");
+      if (isUser) {
+        const userData = JSON.parse(isUser);
+        setUser(userData);
+      }
+    }
+  }, []);
+
   const {
     data: UserNFTListing,
     error,
     refetch,
-  } = api.nft.getUserNFTListing.useQuery({
-    owner_id: "65365e66e6043ce7b5e3b5be",
+  } = api.nft.getUserNFTs.useQuery({
+    owner_id: user.id,
   });
 
   return (
-    <div>
-      <div className="grid grid-cols-3 gap-4">
+    <div className="m-12 mb-10 flex flex-col items-start justify-start">
+      <div className="m-4 grid grid-cols-6 gap-4 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-4">
         {UserNFTListing?.map((nft, index) => (
-          <Card key={index} nft={nft} maintab={false} refetch={refetch} />
+          <NFTCard key={index} nft={nft} mynftRefetch={refetch} maintab={false}/>
         ))}
       </div>
     </div>
   );
 };
 
-export default NFTListing;
+export default MyNFTs;

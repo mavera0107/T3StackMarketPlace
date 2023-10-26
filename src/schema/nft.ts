@@ -31,3 +31,7 @@ export const getNftSchema = z.object({});
 export const getUserNftSchema = z.object({
   owner_id: z.string(),
 });
+
+export const getNFTByIdSchema = z.object({
+  id: z.string(),
+});

@@ -10,15 +10,50 @@ import {
 } from "../ui/ui/dropdown-menu";
 import { useRouter } from "next/router";
 import { Button } from "../ui/ui/button";
-export default function Header() {
+import { setSmartAccount } from "~/redux/Features/smartAccountslice";
+import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
+export default function Header(props: any) {
+  const dispatch = useDispatch();
   const router = useRouter();
 
   function profile() {
     router.push("/profile");
   }
-  function RecentTransaction() {
-    router.push("/RecentTransaction");
+
+  function copyAddress() {
+    navigator.clipboard
+      .writeText(props.account.wallet_address)
+      .then(function () {
+        alert("Address copied to clipboard: " + props.account.wallet_address);
+      })
+      .catch(function (err) {
+        console.error("Unable to copy address: ", err);
+      });
   }
+  async function logout() {
+    try {
+      dispatch(setSmartAccount(undefined));
+      localStorage.clear();
+      toast("Logout Successfully!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      router.replace("/login");
+    } catch (error) {
+      // throw new Error(error)
+      console.log(error, "error");
+    }
+  }
+  // function RecentTransaction() {
+  //   router.push("/RecentTransaction");
+  // }
   return (
     <header className="body-font text-gray-600">
       <div className="flex flex-row items-center justify-center align-middle">
@@ -41,6 +76,10 @@ export default function Header() {
           </nav>
         </div>
         <div className="flex items-center justify-center bg-white">
+          <div className="rounded-xl bg-purple-400 p-2" onClick={copyAddress}>
+            {props.account.wallet_address.slice(0, 7)}....
+            {props.account.wallet_address.slice(11, 16)}
+          </div>
           <DropdownMenu>
             <div className="flex flex-row items-center justify-center">
               <div>
@@ -53,19 +92,19 @@ export default function Header() {
                 </DropdownMenuTrigger>
               </div>
             </div>
-            <DropdownMenuContent>
+            <DropdownMenuContent className="bg-white">
               <DropdownMenuItem className="font-bold" onClick={profile}>
                 <Button>Profile</Button>
               </DropdownMenuItem>
               <DropdownMenuSeparator className="bg-gray-300" />
-              <DropdownMenuItem
+              {/* <DropdownMenuItem
                 className="font-bold"
                 onClick={RecentTransaction}
               >
                 <Button>Recent Transactions</Button>
-              </DropdownMenuItem>
+              </DropdownMenuItem> */}
               <DropdownMenuItem className="font-bold">
-                <Button>Logout</Button>
+                <Button onClick={logout}>Logout</Button>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

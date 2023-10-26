@@ -1,3 +1,4 @@
+"use client";
 import React, { ChangeEvent, Fragment, useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/ui/avatar";
 import {
@@ -9,22 +10,60 @@ import {
   CardTitle,
 } from "../ui/ui/card";
 import { Button } from "../ui/ui/button";
-import { Pen, UserIcon, Mail } from "lucide-react";
+import { Pen, UserIcon, Mail, Loader2 } from "lucide-react";
 import {
   Sheet,
-  SheetClose,
   SheetContent,
   SheetDescription,
-  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
 } from "../ui/ui/sheet";
+import { api } from "~/utils/api";
+import { toast } from "react-toastify";
 
 export default function userProfile() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [isError, setError] = useState(false);
+  const [user, setUser] = useState<any>({
+    wallet_address: "", // Default value for email
+  });
+  const updateUser = api.user.updateUser.useMutation({
+    onSuccess: (res: any) => {
+      console.log(res, "Login result");
+      if (res) {
+        console.log("updated");
+      }
+      setIsLoading(false);
+    },
+    onError: (err: any) => {
+      toast.error(err, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      setError(true);
+      setIsLoading(false);
+      console.log(err.message, "NFT Creation Error");
+    },
+  });
+
+  const { data, refetch } = api.user.getuserdata.useQuery(
+    {
+      wallet_address: user.wallet_address,
+    },
+    {
+      refetchOnWindowFocus: true,
+    },
+  );
+
   const [getUserDetails, setUserDetails] = useState({
     Name: "",
-    Email: "",
   });
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -35,19 +74,33 @@ export default function userProfile() {
     });
   };
 
-  function UpdateData() {
+  async function UpdateData() {
+    setIsLoading(true);
     console.log("UserDetails", getUserDetails);
+
+    const payload = {
+      wallet_address: user.wallet_address,
+      full_name: getUserDetails.Name,
+    };
+
+    let response = await updateUser.mutateAsync(payload);
+    if (response) {
+      setIsLoading(false);
+      refetch();
+    }
+    console.log("Response", response);
   }
-  // const [Address, setAddress] = useState();
-  // function getuserAddress() {
-  //   let address = localStorage.getItem("user") as any;
-  //   if (address) {
-  //     setAddress(address);
-  //   }
-  // }
-  // useEffect(() => {
-  //   getuserAddress();
-  // });
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const isUser = localStorage.getItem("user");
+      if (isUser) {
+        const userData = JSON.parse(isUser);
+        setUser(userData);
+      }
+    }
+  }, []);
+
   return (
     <Fragment>
       <div className="flex flex-col items-center justify-start p-5">
@@ -69,7 +122,9 @@ export default function userProfile() {
               <UserIcon />
               <div className="flex-1 space-y-1">
                 <p className="text-sm font-medium leading-none">User Name</p>
-                <p className="text-sm text-muted-foreground">Muhammad Waqar</p>
+                <p className="text-sm text-muted-foreground">
+                  {data?.user?.full_name || "Loading"}
+                </p>
               </div>
             </div>
             <div className=" flex items-center space-x-4 rounded-md border p-4">
@@ -79,7 +134,8 @@ export default function userProfile() {
                   Email Address
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  muhammadwaqar@gmail.com
+                  {" "}
+                  {data?.user?.email_address || "Loading"}
                 </p>
               </div>
             </div>
@@ -125,14 +181,26 @@ export default function userProfile() {
                       />
                     </div>
                   </div>
-                  <Button
-                    type="submit"
-                    className="rounded-xl bg-gray-200 hover:bg-green-300"
-                    onClick={UpdateData}
-                  >
-                    Save Name
-                  </Button>
+                  {isLoading ? (
+                    <Button disabled>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Please wait
+                    </Button>
+                  ) : (
+                    <Button
+                      type="submit"
+                      className="rounded-xl bg-gray-200 hover:bg-green-300"
+                      onClick={UpdateData}
+                    >
+                      Save Name
+                    </Button>
+                  )}
                 </div>
+                {isError ? (
+                  <p className="text-red-400">Error occured</p>
+                ) : (
+                  <></>
+                )}
               </SheetContent>
             </Sheet>
           </CardFooter>

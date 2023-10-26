@@ -286,6 +286,7 @@ import React, { Fragment, useState } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import PaymentMethods from "~/components/Modals/Modal";
 import { Button } from "../components/ui/ui/button";
+import { api } from "~/utils/api";
 
 const Test = () => {
   const [showModal, setShowModal] = useState(false);
@@ -297,7 +298,7 @@ const Test = () => {
     setShowModal(true);
     //  setSelectedNft(props);
   };
-
+ 
   return (
     <Fragment>
       Hello

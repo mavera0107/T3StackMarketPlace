@@ -22,14 +22,12 @@ const NFTListing = () => {
     data: UserNFTListing,
     error,
     refetch,
-  } = api.nft.onlylisted.useQuery();
+  } = api.nft.getNFTListing.useQuery();
 
   return (
     <div>
-      <div className="grid grid-cols-3 gap-4">
-        {UserNFTListing?.map((nft, index) => (
-          <Card key={index} nft={nft} maintab={true} refetch={refetch} />
-        ))}
+      <div className="grid grid-cols-6 gap-4 sm:grid-cols-3 md:grid-cols-5">
+        {UserNFTListing?.map((nft, index) => <Card key={index} nft={nft} />)}
       </div>
     </div>
   );

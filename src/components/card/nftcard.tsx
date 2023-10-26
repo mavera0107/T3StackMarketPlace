@@ -1,12 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "../ui/ui/hover-card";
+import { Button } from "../ui/ui/button";
+import { useSelector } from "react-redux";
+import { RootState } from "~/redux/store";
 import { ListModal } from "../Modals/ListModal";
-import { loadStripe } from "@stripe/stripe-js";
 
 // Define the interface for the 'nft' prop
 interface NFT {
@@ -26,56 +23,60 @@ interface NFT {
 
 interface CardProps {
   nft: NFT;
+  mynftRefetch: () => void;
   maintab: Boolean;
-  refetch: () => void;
 }
 
-const Card: React.FC<CardProps> = ({ nft, maintab, refetch }) => {
-  const stripePromise: any = loadStripe(
-    process.env.NEXT_PUBLIC_PUBLISHABLE_KEY as any,
+const Card: React.FC<CardProps> = ({ nft, mynftRefetch, maintab }) => {
+  const [user, setUser] = useState<any>({
+    wallet_address: "", // Default value for email
+  });
+  const { smartAccount } = useSelector(
+    (state: RootState) => state.smartAccountSlice as any,
   );
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const isUser = localStorage.getItem("user");
+      if (isUser) {
+        const userData = JSON.parse(isUser);
+        setUser(userData);
+      }
+    }
+    console.log(nft.nft_owner === user.wallet_address);
+  }, []);
   return (
-    <div className="rounded-lg border border-gray-300 p-4 shadow-lg hover:shadow-2xl">
-      <img
-        src={nft.ipfs_url?.toString()}
-        alt={nft.name?.toString()}
-        className="mb-4 h-48 w-48 rounded-lg object-cover"
-      />
-      <h2 className="mb-2 text-xl font-bold">{nft.name}</h2>
-      <p className="mb-4 text-gray-500">{nft.description}</p>
-
-      {maintab && nft.is_listed && (
-        <button
-          className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
-          onClick={() => {
-            // Handle buy logic here
-          }}
-        >
-          Buy
-        </button>
-      )}
-
-      {maintab && nft.is_listed &&<HoverCard>
-        <div className="flex">
-          <HoverCardTrigger>
-            <p className="mt-2 text-lg font-semibold">Hover for Details</p>
-          </HoverCardTrigger>
-        </div>
-        <HoverCardContent className="w-40 bg-white p-4">
-          <p className="mb-2 text-sm">
-            {nft.price &&
-              Math.round(Number(nft.price)).toLocaleString("en-US", {
-                style: "currency",
-                currency: "USD",
-              })}
-          </p>
-          <div className="flex items-center">
-            <span className="text-xs text-gray-500">
-              Created on {new Date(nft.created_at).toLocaleDateString()}
-            </span>
+    <div className="w-50 mb-32 mt-24 flex h-52 items-center justify-center">
+      <div className="rounded-xl border border-gray-300 p-4 shadow-lg hover:shadow-2xl hover:shadow-green-300">
+        <img
+          src={nft.ipfs_url?.toString()}
+          alt={nft.name?.toString()}
+          className="mb-4 h-40 w-40 rounded-xl object-cover"
+        />
+        <h2 className="mb-2 text-xl font-bold">{nft.name}</h2>
+        <p className="mb-4 text-gray-500">{nft.description?.slice(0, 13)}</p>
+        <h1 className="font-bold">
+          Price: {nft.price === "0" ? "Not Listed" : `${nft.price} $`}
+        </h1>
+        {maintab ? (
+          <></>
+        ) : (
+          <div>
+            {user.wallet_address && nft.nft_owner === user.wallet_address ? (
+              nft.is_listed ? (
+                <Button className="rounded-xl bg-red-400">Remove List</Button>
+              ) : (
+                <ListModal
+                  tokenId={String(nft.token_id)}
+                  refetch={mynftRefetch}
+                />
+              )
+            ) : null}
           </div>
-        </HoverCardContent>
-      </HoverCard>}
+        )}
+        <Link href={`/NFTDetails/${nft.id}`}>
+          <Button className="m-2 rounded-xl bg-green-300">Details</Button>
+        </Link>
+      </div>
     </div>
   );
 };
