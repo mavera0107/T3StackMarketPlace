@@ -1,5 +1,6 @@
 import Web3 from "web3";
 import erc20Artifact from "./erc20abi.json";
+
 const erc20Abi = erc20Artifact.abi;
 
 export async function transferTokens(payload: any) {
@@ -15,8 +16,10 @@ export async function transferTokens(payload: any) {
   try {
     const privateKey: string | undefined = process.env.NEXT_PUBLIC_Private_KEY;
     const rpcUrl: string | undefined = process.env.NEXT_PUBLIC_Mumbai_RPC_URL;
-    const erc20TokenAddress: string | undefined =
+    const erc20TokenAddress: any =
       process.env.NEXT_PUBLIC_ERC20_Contract_Address;
+    const toAddress: String = payload?.toAddress;
+    const amount: any = payload?.amount;
 
     if (!privateKey || !rpcUrl || !erc20TokenAddress) {
       return { success: false, message: "Missing environment variables" };
@@ -29,11 +32,10 @@ export async function transferTokens(payload: any) {
       erc20Abi,
       erc20TokenAddress,
     );
-
-    const transaction = erc20TokenContract.methods.transfer(
-      payload.toAddress,
-      payload.amount,
-    );
+    if (!erc20TokenContract.methods || !erc20TokenContract.methods.transfer) {
+      throw new Error("safeMint is not defined");
+    }
+    let transaction = erc20TokenContract.methods.transfer(toAddress, amount);
 
     const gasPrice = await web3.eth.getGasPrice();
     const gasLimit = 200000; // You can adjust this based on your contract's complexity

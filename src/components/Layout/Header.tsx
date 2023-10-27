@@ -78,7 +78,10 @@ export default function Header(props: any) {
         abi: ERC20_ABI,
         functionName: "balanceOf",
         args: [props.account.wallet_address],
-      });
+      }); if (result === undefined || result === null) {
+        console.error("Error: Result is undefined or null");
+        return;
+      }
       const res: string = result?.toString();
       // Convert the result to a number, handle precision, and then format it as a string with maximum 6 decimal places
       const balanceNumber = parseFloat(res) / 1000000;
