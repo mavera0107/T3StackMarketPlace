@@ -27,7 +27,9 @@ const NFTListing = () => {
   return (
     <div>
       <div className="grid grid-cols-6 gap-4 sm:grid-cols-3 md:grid-cols-5">
-        {UserNFTListing?.map((nft, index) => <Card key={index} nft={nft} />)}
+        {UserNFTListing?.map((nft, index) => (
+          <Card key={index} nft={nft} maintab={false} mynftRefetch={refetch} />
+        ))}
       </div>
     </div>
   );
