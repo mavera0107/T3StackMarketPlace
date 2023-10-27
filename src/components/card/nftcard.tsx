@@ -4,7 +4,7 @@ import { Button } from "../ui/ui/button";
 import { useSelector } from "react-redux";
 import { RootState } from "~/redux/store";
 import { ListModal } from "../Modals/ListModal";
-
+import { RemoveListModal } from "../Modals/RemoveList";
 // Define the interface for the 'nft' prop
 interface NFT {
   id: string;
@@ -63,7 +63,10 @@ const Card: React.FC<CardProps> = ({ nft, mynftRefetch, maintab }) => {
           <div>
             {user.wallet_address && nft.nft_owner === user.wallet_address ? (
               nft.is_listed ? (
-                <Button className="rounded-xl bg-red-400">Remove List</Button>
+                <RemoveListModal
+                  tokenId={String(nft.token_id)}
+                  refetch={mynftRefetch}
+                />
               ) : (
                 <ListModal
                   tokenId={String(nft.token_id)}

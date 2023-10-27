@@ -1,6 +1,7 @@
+"use client";
 import { loadStripe } from "@stripe/stripe-js";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PaymentMethods from "~/components/Modals/Modal";
 import { api } from "~/utils/api";
 
@@ -21,13 +22,12 @@ const NFTdetails = () => {
   }
 
   const { response } = data;
-  const handleBuyFunc = (props: any) => {
-    setShowModal(true);
-    //  setSelectedNft(props);
-  };
+
+
   const stripePromise: any = loadStripe(
     process.env.NEXT_PUBLIC_PUBLISHABLE_KEY as any,
   );
+
   return (
     <div className="min-w-fullflex-row m-16 flex h-72 items-center justify-center">
       <div>
@@ -51,14 +51,14 @@ const NFTdetails = () => {
           {response.nft_owner?.slice(16, 32)}
         </h2>
         <h1 className="font-bold">Price: {response.price} $</h1>
-
-        <PaymentMethods
-          stripe={stripePromise}
-          isModal={showModal}
-          setIsModal={setShowModal}
-          nft={response}
-          refetch={refetch}
-        />
+          <PaymentMethods
+            stripe={stripePromise}
+            isModal={showModal}
+            setIsModal={setShowModal}
+            nft={response}
+            refetch={refetch}
+          />
+        
       </div>
     </div>
   );
