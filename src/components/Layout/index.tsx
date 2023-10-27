@@ -16,8 +16,11 @@ import { ChainId } from "@biconomy/core-types";
 import { bundler, paymaster } from "../../utils/contants";
 import { useSelector } from "react-redux";
 import Footer from "./Footer";
+import balanceslice, { setbalancetrigger } from "~/redux/Features/balanceslice";
+import { setBalance } from "viem/_types/actions/test/setBalance";
 
 const Layout = ({ children }: { children: ReactNode }) => {
+
   const [user, setUser] = useState<any>();
   const [interval, enableInterval] = useState<boolean>(false);
   const [web3auth, setWeb3auth] = useState<Web3Auth | null>(null);
@@ -175,6 +178,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
       console.log("Smart Account in layout : ", smartAccount);
       console.log("Address :: ", await smartAccount.getSmartAccountAddress());
       dispatch(setSmartAccount(smartAccount));
+      dispatch(setbalancetrigger(true));
     } catch (e) {
       console.error(e);
     }

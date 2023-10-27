@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Elements } from "@stripe/react-stripe-js";
 import { Button } from "../ui/ui/button";
-
+import BuyFromToken from "./buyfromTokenmodal";
 import StripeForm from "../StripForm/StripeForm";
 import {
   Dialog,
@@ -16,10 +16,12 @@ const PaymentMethods = ({ isModal, setIsModal, nft, stripe, refetch }: any) => {
   console.log(nft, "1 nft record");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [showStripeForm, setShowStripeForm] = useState(false); // Initialize to false
+  const [tokentransfer, settokentransfer] = useState(false);
 
   const openDialog = () => {
     setIsDialogOpen(true);
-    setShowStripeForm(true); // Set to true when opening the dialog
+    setShowStripeForm(true);
+    settokentransfer(true); // Set to true when opening the dialog
   };
 
   const closeDialog = () => {
@@ -49,6 +51,18 @@ const PaymentMethods = ({ isModal, setIsModal, nft, stripe, refetch }: any) => {
                 <div className="mt-3">
                   <Elements stripe={stripe}>
                     <StripeForm
+                      isModal={isModal}
+                      setIsModal={setIsModal}
+                      nft={nft}
+                      refetch={refetch}
+                    />
+                  </Elements>
+                </div>
+              )}
+              {tokentransfer && (
+                <div className="mt-3">
+                  <Elements stripe={stripe}>
+                    <BuyFromToken
                       isModal={isModal}
                       setIsModal={setIsModal}
                       nft={nft}

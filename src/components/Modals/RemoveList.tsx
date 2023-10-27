@@ -30,7 +30,7 @@ export const RemoveListModal: React.FC<nftData> = ({ tokenId, refetch }) => {
       refetch();
       setShowModal(false);
       if (res) {
-        toast.success("NFT Listing Successfully!", {
+        toast.success("Listing Remove Successfully!", {
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
@@ -85,8 +85,9 @@ export const RemoveListModal: React.FC<nftData> = ({ tokenId, refetch }) => {
       ) {
         throw new Error("safeMint is not defined");
       }
-      const populatedTxn =
-        await contract.populateTransaction.removeListing(tokenId);
+      const populatedTxn = await contract.populateTransaction.removeListing(
+        Number(tokenId),
+      );
 
       const calldata = populatedTxn.data;
       const tx1 = {

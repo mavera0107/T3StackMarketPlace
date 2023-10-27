@@ -58,7 +58,6 @@ const NFTdetails = () => {
             nft={response}
             refetch={refetch}
           />
-        
       </div>
     </div>
   );

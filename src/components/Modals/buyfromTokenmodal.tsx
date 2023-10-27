@@ -22,7 +22,6 @@ import { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import { Loader2 } from "lucide-react";
 import "react-toastify/dist/ReactToastify.css";
-import { CallTracker } from "assert";
 import { transferTokens } from "~/server/web3/transfertoken";
 import {
   ERC20_ABI,
@@ -33,7 +32,7 @@ import {
 import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
 import { setbalancetrigger } from "~/redux/Features/balanceslice";
-const StripeForm = ({
+const BuyFromToken = ({
   isModal,
   setIsModal,
   nft,
@@ -95,21 +94,7 @@ const StripeForm = ({
       console.log(err.message, "NFT Creation Error");
     },
   });
-  const fetchData = async (fromAddress: any, toAddress: any, amount: any) => {
-    try {
-      let bal = await transferTokens({
-        fromAddress: fromAddress,
-        toAddress: toAddress,
-        amount: amount,
-      });
-      // You can process the balance here as needed
-      console.log(bal);
-      return true;
-    } catch (err) {
-      console.error(err);
-      return false;
-    }
-  };
+
   useEffect(() => {
     let isUser: any = JSON.parse(localStorage.getItem("user") as any);
     setUser(isUser);
@@ -140,73 +125,21 @@ const StripeForm = ({
       setIsLoading(false);
       return;
     }
-    const { token, error } = await stripe.createToken(
-      elements.getElement(CardElement),
-    );
-    console.log(token, error, "token, error");
-
-    if (error !== undefined) {
-      setBtnDisabled(true);
-      setTimeout(function () {
-        setBtnDisabled(false);
-      }, 2000);
-
-      toast.error("ERROR!", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-    } else {
-      const obj = {
-        token: token.id,
-        price: +nft.price,
-      };
-      console.log(obj, "object in stripe form");
-
-      try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_BASE_URL}paymentIntent`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(obj),
-          },
-        );
-        console.log({ response }, "response");
-
-        if (!response.ok) {
-          throw new Error("API request failed");
-        }
-        const TokenResponse = await fetchData(
-          "0xEdb8373211332CC6F141CEBB7B8587C7CFb68243",
-          user.wallet_address,
-          Number(nft.price) * 1000000,
-        );
-        if (TokenResponse) {
-          const transferResponse = await BuyNFT(nft.token_id, nft.price);
-          if (transferResponse?.sucess) {
-            let value: any = {
-              token_id: nft.token_id,
-              wallet_address: user.wallet_address,
-              owner_id: user.id,
-            };
-
-            let response = await updateBUy.mutateAsync(value);
-            console.log("Response", response);
-          }
-        }
-        setIsModal(false);
-      } catch (error) {
-        console.error("Error:", error);
-        throw error;
+    try {
+      const transferResponse = await BuyNFT(nft.token_id, nft.price);
+      if (transferResponse?.sucess) {
+        let value: any = {
+          token_id: nft.token_id,
+          wallet_address: user.wallet_address,
+          owner_id: user.id,
+        };
+        let response = await updateBUy.mutateAsync(value);
+        console.log("Response", response);
       }
+      setIsModal(false);
+    } catch (error) {
+      console.error("Error:", error);
+      throw error;
     }
   };
 
@@ -301,16 +234,14 @@ const StripeForm = ({
     <Dialog>
       <DialogTrigger asChild>
         <Button variant="outline" onClick={() => setIsModal(true)}>
-          Bank Transfer{" "}
+          Token Transfer{" "}
         </Button>
       </DialogTrigger>
       <DialogContent className="bg-white">
         <DialogHeader>
           <DialogTitle>Checkout</DialogTitle>
         </DialogHeader>
-        <form>
-          <CardElement />
-        </form>
+        <div>Buy With Your USD Balance</div>
         <DialogFooter>
           {btnDisabled ? (
             <Button disabled>
@@ -347,4 +278,4 @@ const StripeForm = ({
   );
 };
 
-export default StripeForm;
+export default BuyFromToken;

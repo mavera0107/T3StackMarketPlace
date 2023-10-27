@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/ui/avatar";
 import {
@@ -13,8 +13,24 @@ import { Button } from "../ui/ui/button";
 import { setSmartAccount } from "~/redux/Features/smartAccountslice";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
+import { createPublicClient, http } from "viem";
+import { polygonMumbai } from "viem/chains";
+import { ERC20_ABI, USDC_Contract_Address } from "~/utils/contants";
+import { useSelector } from "react-redux";
+import { AppDispatch, RootState } from "~/redux/store";
+import { setbalancetrigger } from "~/redux/Features/balanceslice";
+
+const client = createPublicClient({
+  chain: polygonMumbai,
+  transport: http(),
+});
+
 export default function Header(props: any) {
+  const { balancetrigger } = useSelector(
+    (state: RootState) => state.balanceAccountSlice as any,
+  );
   const dispatch = useDispatch();
+  const [balance, setBalance] = useState<any>("");
   const router = useRouter();
 
   function profile() {
@@ -51,9 +67,40 @@ export default function Header(props: any) {
       console.log(error, "error");
     }
   }
-  // function RecentTransaction() {
-  //   router.push("/RecentTransaction");
-  // }
+  function TransfertoEOA() {
+    router.push("/transfertoEoa");
+  }
+
+  async function fetchData() {
+    try {
+      const result = await client.readContract({
+        address: USDC_Contract_Address,
+        abi: ERC20_ABI,
+        functionName: "balanceOf",
+        args: [props.account.wallet_address],
+      });
+      const res: string = result?.toString();
+      // Convert the result to a number, handle precision, and then format it as a string with maximum 6 decimal places
+      const balanceNumber = parseFloat(res) / 1000000;
+      const formattedBalance = balanceNumber.toFixed(6); // Set the desired number of decimal places
+
+      // Remove trailing zeroes and convert the number back to string
+      const balanceString = parseFloat(formattedBalance).toString();
+
+      setBalance(balanceString);
+
+      console.log(result); // Log the original fetched data
+      console.log(balanceString); // Log the formatted balance without trailing zeroes
+      dispatch(setbalancetrigger(true));
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  }
+
+  useEffect(() => {
+    fetchData();
+  }, [balancetrigger]);
+
   return (
     <header className="body-font text-gray-600">
       <div className="flex flex-row items-center justify-center align-middle">
@@ -74,6 +121,10 @@ export default function Header(props: any) {
               <Link href="/listednfts">Listed Nfts</Link>
             </a>
           </nav>
+        </div>
+        <div className="m-3 flex flex-row items-center justify-center rounded-xl bg-purple-400">
+          <div className="rounded-xl p-2">Balance</div>
+          <div>:{balance}$</div>
         </div>
         <div className="flex items-center justify-center bg-white">
           <div className="rounded-xl bg-purple-400 p-2" onClick={copyAddress}>
@@ -97,12 +148,9 @@ export default function Header(props: any) {
                 <Button>Profile</Button>
               </DropdownMenuItem>
               <DropdownMenuSeparator className="bg-gray-300" />
-              {/* <DropdownMenuItem
-                className="font-bold"
-                onClick={RecentTransaction}
-              >
-                <Button>Recent Transactions</Button>
-              </DropdownMenuItem> */}
+              <DropdownMenuItem className="font-bold" onClick={TransfertoEOA}>
+                <Button>Transfer Tokens To EOA</Button>
+              </DropdownMenuItem>
               <DropdownMenuItem className="font-bold">
                 <Button onClick={logout}>Logout</Button>
               </DropdownMenuItem>

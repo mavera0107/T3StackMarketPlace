@@ -94,9 +94,11 @@ export const ListModal: React.FC<nftData> = ({ tokenId, refetch }) => {
       ) {
         throw new Error("safeMint is not defined");
       }
+      console.log("Show Price",showprice,tokenId);
+      const price=Number(showprice)*1000000;
       const populatedTxn = await contract.populateTransaction.listNft(
-        tokenId,
-        showprice,
+        Number(tokenId),
+        price,
       );
 
       const calldata = populatedTxn.data;
