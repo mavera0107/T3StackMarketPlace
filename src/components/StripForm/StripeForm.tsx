@@ -32,7 +32,6 @@ import {
 } from "~/utils/contants";
 import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
-import { setbalancetrigger } from "~/redux/Features/balanceslice";
 const StripeForm = ({
   isModal,
   setIsModal,
@@ -40,9 +39,6 @@ const StripeForm = ({
   setBankTransfer,
   refetch,
 }: any) => {
-  const { balancetrigger } = useSelector(
-    (state: RootState) => state.balanceAccountSlice as any,
-  );
   const dispatch = useDispatch();
   const router = useRouter();
   const { smartAccount } = useSelector(
@@ -77,7 +73,6 @@ const StripeForm = ({
         });
         router.push("/mynfts");
         setIsLoading(false);
-        dispatch(setbalancetrigger(true));
       }
     },
     onError: (err: any) => {
@@ -126,7 +121,7 @@ const StripeForm = ({
       user.wallet_address.toLocaleLowerCase() ===
       nft.nft_owner.toLocaleLowerCase()
     ) {
-      setIsModal(false);
+      () => setIsModal(false);
       toast.error("Cannot Buy Your Own NFT!", {
         position: "top-right",
         autoClose: 5000,

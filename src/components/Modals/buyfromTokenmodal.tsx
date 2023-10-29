@@ -31,7 +31,6 @@ import {
 } from "~/utils/contants";
 import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
-import { setbalancetrigger } from "~/redux/Features/balanceslice";
 const BuyFromToken = ({
   isModal,
   setIsModal,
@@ -39,9 +38,6 @@ const BuyFromToken = ({
   setBankTransfer,
   refetch,
 }: any) => {
-  const { balancetrigger } = useSelector(
-    (state: RootState) => state.balanceAccountSlice as any,
-  );
   const dispatch = useDispatch();
   const router = useRouter();
   const { smartAccount } = useSelector(
@@ -76,7 +72,6 @@ const BuyFromToken = ({
         });
         router.push("/mynfts");
         setIsLoading(false);
-        dispatch(setbalancetrigger(true));
       }
     },
     onError: (err: any) => {

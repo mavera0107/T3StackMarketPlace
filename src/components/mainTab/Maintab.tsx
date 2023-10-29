@@ -3,6 +3,7 @@ import Card from "~/components/card/nftcard";
 import { api } from "~/utils/api";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
+import { Skeleton } from "../ui/ui/skeleton";
 
 const MainTabs = () => {
   type NFTItem = {
@@ -124,6 +125,12 @@ const MainTabs = () => {
                     maintab={true}
                   />
                 ))}
+                {shuffledNfts2 === undefined &&
+                  Array.from({ length: 6 }).map((_, index) => (
+                    <div key={index} className="carousel-item mx-2">
+                      <Skeleton className="w-50 h-52" />
+                    </div>
+                  ))}
               </Carousel>
             </div>
           </div>

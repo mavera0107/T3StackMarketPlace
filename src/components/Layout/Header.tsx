@@ -18,7 +18,6 @@ import { polygonMumbai } from "viem/chains";
 import { ERC20_ABI, USDC_Contract_Address } from "~/utils/contants";
 import { useSelector } from "react-redux";
 import { AppDispatch, RootState } from "~/redux/store";
-import { setbalancetrigger } from "~/redux/Features/balanceslice";
 
 const client = createPublicClient({
   chain: polygonMumbai,
@@ -26,9 +25,6 @@ const client = createPublicClient({
 });
 
 export default function Header(props: any) {
-  const { balancetrigger } = useSelector(
-    (state: RootState) => state.balanceAccountSlice as any,
-  );
   const dispatch = useDispatch();
   const [balance, setBalance] = useState<any>("");
   const router = useRouter();
@@ -78,7 +74,8 @@ export default function Header(props: any) {
         abi: ERC20_ABI,
         functionName: "balanceOf",
         args: [props.account.wallet_address],
-      }); if (result === undefined || result === null) {
+      });
+      if (result === undefined || result === null) {
         console.error("Error: Result is undefined or null");
         return;
       }
@@ -94,7 +91,6 @@ export default function Header(props: any) {
 
       console.log(result); // Log the original fetched data
       console.log(balanceString); // Log the formatted balance without trailing zeroes
-      dispatch(setbalancetrigger(true));
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -102,7 +98,7 @@ export default function Header(props: any) {
 
   useEffect(() => {
     fetchData();
-  }, [balancetrigger]);
+  }, []);
 
   return (
     <header className="body-font text-gray-600">

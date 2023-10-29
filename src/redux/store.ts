@@ -1,12 +1,10 @@
 "use client";
 import smartAccountReducer from "./Features/smartAccountslice";
-import getbalancetrigger from "./Features/balanceslice";
 import { configureStore } from "@reduxjs/toolkit";
 import { TypedUseSelectorHook, useSelector } from "react-redux";
 export const store = configureStore({
   reducer: {
     smartAccountSlice: smartAccountReducer,
-    balanceAccountSlice: getbalancetrigger,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

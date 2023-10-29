@@ -1,11 +1,14 @@
-"use client";
+// import React, { useEffect, useState } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import PaymentMethods from "~/components/Modals/Modal";
 import { api } from "~/utils/api";
 
 const NFTdetails = () => {
+  const [user, setUser] = useState<any>({
+    wallet_address: "",
+  });
   const [showModal, setShowModal] = useState(false);
 
   const router = useRouter();
@@ -14,7 +17,15 @@ const NFTdetails = () => {
   if (typeof id !== "string") {
     return <div>NFT not found</div>;
   }
-
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const isUser = localStorage.getItem("user");
+      if (isUser) {
+        const userData = JSON.parse(isUser);
+        setUser(userData);
+      }
+    }
+  }, []);
   const { data, refetch } = api.nft.getNFTById.useQuery({ id: id });
 
   if (!data || !data.response) {
@@ -23,13 +34,12 @@ const NFTdetails = () => {
 
   const { response } = data;
 
-
   const stripePromise: any = loadStripe(
     process.env.NEXT_PUBLIC_PUBLISHABLE_KEY as any,
   );
 
   return (
-    <div className="min-w-fullflex-row m-16 flex h-72 items-center justify-center">
+    <div className="m-16 flex h-72 min-w-full flex-row items-center justify-center">
       <div>
         <img
           src={response.ipfs_url || undefined}
@@ -50,7 +60,10 @@ const NFTdetails = () => {
           Creator {response.nft_owner?.slice(0, 8)}...
           {response.nft_owner?.slice(16, 32)}
         </h2>
-        <h1 className="font-bold">Price: {response.price} $</h1>
+        <h1 className="font-bold">
+          Price: {response.price === "0" ? "Not Listed" : `${response.price} $`}
+        </h1>
+        {response.is_listed && response.nft_owner !== user.wallet_address ? (
           <PaymentMethods
             stripe={stripePromise}
             isModal={showModal}
@@ -58,6 +71,9 @@ const NFTdetails = () => {
             nft={response}
             refetch={refetch}
           />
+        ) : (
+          <></>
+        )}
       </div>
     </div>
   );

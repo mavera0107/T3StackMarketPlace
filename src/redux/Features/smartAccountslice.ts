@@ -1,10 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import {
-  BiconomySmartAccount,
-  BiconomySmartAccountConfig,
-} from "@biconomy/account";
-import SocialLogin from "@biconomy/web3-auth";
-
+import { BiconomySmartAccount } from "@biconomy/account";
 interface smartAccountWeb3 {
   smartAccount: BiconomySmartAccount | undefined;
 }

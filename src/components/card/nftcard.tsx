@@ -31,9 +31,7 @@ const Card: React.FC<CardProps> = ({ nft, mynftRefetch, maintab }) => {
   const [user, setUser] = useState<any>({
     wallet_address: "", // Default value for email
   });
-  const { smartAccount } = useSelector(
-    (state: RootState) => state.smartAccountSlice as any,
-  );
+  
   useEffect(() => {
     if (typeof window !== "undefined") {
       const isUser = localStorage.getItem("user");
