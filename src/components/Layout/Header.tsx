@@ -13,21 +13,19 @@ import { Button } from "../ui/ui/button";
 import { setSmartAccount } from "~/redux/Features/smartAccountslice";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
-import { createPublicClient, http } from "viem";
-import { polygonMumbai } from "viem/chains";
 import { ERC20_ABI, USDC_Contract_Address } from "~/utils/contants";
-import { useSelector } from "react-redux";
-import { AppDispatch, RootState } from "~/redux/store";
-
-const client = createPublicClient({
-  chain: polygonMumbai,
-  transport: http(),
-});
+import { useContractRead } from "wagmi";
 
 export default function Header(props: any) {
   const dispatch = useDispatch();
-  const [balance, setBalance] = useState<any>("");
   const router = useRouter();
+
+  const { data, error, refetch } = useContractRead({
+    address: USDC_Contract_Address,
+    abi: ERC20_ABI,
+    functionName: "balanceOf",
+    args: [props.account.wallet_address],
+  });
 
   function profile() {
     router.push("/profile");
@@ -67,38 +65,9 @@ export default function Header(props: any) {
     router.push("/transfertoEoa");
   }
 
-  async function fetchData() {
-    try {
-      const result = await client.readContract({
-        address: USDC_Contract_Address,
-        abi: ERC20_ABI,
-        functionName: "balanceOf",
-        args: [props.account.wallet_address],
-      });
-      if (result === undefined || result === null) {
-        console.error("Error: Result is undefined or null");
-        return;
-      }
-      const res: string = result?.toString();
-      // Convert the result to a number, handle precision, and then format it as a string with maximum 6 decimal places
-      const balanceNumber = parseFloat(res) / 1000000;
-      const formattedBalance = balanceNumber.toFixed(6); // Set the desired number of decimal places
-
-      // Remove trailing zeroes and convert the number back to string
-      const balanceString = parseFloat(formattedBalance).toString();
-
-      setBalance(balanceString);
-
-      console.log(result); // Log the original fetched data
-      console.log(balanceString); // Log the formatted balance without trailing zeroes
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  }
-
   useEffect(() => {
-    fetchData();
-  }, []);
+    refetch();
+  });
 
   return (
     <header className="body-font text-gray-600">
@@ -123,7 +92,7 @@ export default function Header(props: any) {
         </div>
         <div className="m-3 flex flex-row items-center justify-center rounded-xl bg-purple-400">
           <div className="rounded-xl p-2">Balance</div>
-          <div>:{balance}$</div>
+          <div>:{parseFloat(data?.toString()) / 1000000}$</div>
         </div>
         <div className="flex items-center justify-center bg-white">
           <div className="rounded-xl bg-purple-400 p-2" onClick={copyAddress}>

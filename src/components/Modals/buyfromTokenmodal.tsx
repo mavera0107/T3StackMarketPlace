@@ -31,15 +31,10 @@ import {
 } from "~/utils/contants";
 import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
-const BuyFromToken = ({
-  isModal,
-  setIsModal,
-  nft,
-  setBankTransfer,
-  refetch,
-}: any) => {
-  const dispatch = useDispatch();
+import { useContractRead } from "wagmi";
+const BuyFromToken = ({ isModal, setIsModal, nft, setBankTransfer }: any) => {
   const router = useRouter();
+  const [error, setisError] = useState(false);
   const { smartAccount } = useSelector(
     (state: RootState) => state.smartAccountSlice as any,
   );
@@ -54,6 +49,13 @@ const BuyFromToken = ({
   const [user, setUser] = useState({
     id: "",
     wallet_address: "",
+  });
+
+  const { data, refetch } = useContractRead({
+    address: USDC_Contract_Address,
+    abi: ERC20_ABI,
+    functionName: "balanceOf",
+    args: [user.wallet_address],
   });
 
   const updateBUy = api.nft.updateBuyNFT.useMutation({
@@ -102,14 +104,12 @@ const BuyFromToken = ({
     setBtnDisabled(true);
     setIsLoading(true);
     e.preventDefault();
-    if (
-      user.wallet_address.toLocaleLowerCase() ===
-      nft.nft_owner.toLocaleLowerCase()
-    ) {
-      setIsModal(false);
-      toast.error("Cannot Buy Your Own NFT!", {
+    const totaltokens = data as any;
+    console.log(totaltokens);
+    if (Number(parseFloat(totaltokens) / 1000000) !== Number(nft.price)) {
+      toast.error("Cannot Buy With low USDC balance", {
         position: "top-right",
-        autoClose: 5000,
+        autoClose: 400,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -117,7 +117,9 @@ const BuyFromToken = ({
         progress: undefined,
         theme: "light",
       });
+      setisError(true);
       setIsLoading(false);
+      setBtnDisabled(false);
       return;
     }
     try {
@@ -237,13 +239,19 @@ const BuyFromToken = ({
           <DialogTitle>Checkout</DialogTitle>
         </DialogHeader>
         <div>Buy With Your USD Balance</div>
-        <DialogFooter>
-          {btnDisabled ? (
-            <Button disabled>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Buy NFT
-            </Button>
-          ) : (
+        <DialogFooter className="flex flex-col items-center md:flex-row md:justify-between">
+          <div className="flex gap-2">
+            <DialogTrigger>
+              <Button
+                className="rounded-xl bg-red-400"
+                onClick={(e) => {
+                  setIsModal(false);
+                  setisError(false);
+                }}
+              >
+                Close
+              </Button>
+            </DialogTrigger>
             <Button
               className="rounded-xl bg-green-300"
               color="temp-10"
@@ -252,12 +260,18 @@ const BuyFromToken = ({
             >
               Buy NFT
             </Button>
+          </div>
+
+          {error && (
+            <p className="mt-2 rounded-xl bg-red-400 p-2 md:mt-0">
+              You don't have enough USDC balance
+            </p>
           )}
         </DialogFooter>
       </DialogContent>
       <ToastContainer
         position="top-right"
-        autoClose={5000}
+        autoClose={1000}
         hideProgressBar={false}
         newestOnTop={false}
         closeOnClick
@@ -266,6 +280,7 @@ const BuyFromToken = ({
         draggable
         pauseOnHover
         theme="light"
+        className="z-50"
       />
       {/* Same as */}
       <ToastContainer />

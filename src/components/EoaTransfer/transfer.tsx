@@ -23,13 +23,8 @@ import {
   SponsorUserOperationDto,
 } from "@biconomy/paymaster";
 import { useDispatch } from "react-redux";
-import { setbalancetrigger } from "~/redux/Features/balanceslice";
 
 export default function TransfertoEOA() {
-  const { balancetrigger } = useSelector(
-    (state: RootState) => state.balanceAccountSlice as any,
-  );
-  const dispatch = useDispatch();
   const { smartAccount } = useSelector(
     (state: RootState) => state.smartAccountSlice as any,
   );
@@ -117,7 +112,6 @@ export default function TransfertoEOA() {
         });
         setTokenAmount(""); // Clear token amount input
         setAddress("");
-        dispatch(setbalancetrigger(true));
       }
     } catch (err) {
       console.error(err);

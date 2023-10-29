@@ -3,6 +3,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import PaymentMethods from "~/components/Modals/Modal";
+import { Skeleton } from "~/components/ui/ui/skeleton";
 import { api } from "~/utils/api";
 
 const NFTdetails = () => {
@@ -29,7 +30,16 @@ const NFTdetails = () => {
   const { data, refetch } = api.nft.getNFTById.useQuery({ id: id });
 
   if (!data || !data.response) {
-    return <div>NFT not found</div>;
+    return (
+      <div className="w-50 mb-32 mt-24 flex h-52 items-center justify-center">
+        <div className="rounded-xl border border-gray-300 p-4 shadow-lg">
+          <Skeleton className="mb-4 h-40 w-40 rounded-xl" />
+          <Skeleton className="mb-2 h-6 w-48" />
+          <Skeleton className="mb-4 h-4 w-32" />
+          <Skeleton className="h-6 w-48" />
+        </div>
+      </div>
+    );
   }
 
   const { response } = data;
