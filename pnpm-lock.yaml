@@ -80,6 +80,9 @@ dependencies:
   '@walletconnect/client':
     specifier: ~1.x
     version: 1.8.0
+  '@walletconnect/sign-client':
+    specifier: ^2.10.4
+    version: 2.10.4
   '@walletconnect/types':
     specifier: ~1.x
     version: 1.8.0
@@ -88,7 +91,7 @@ dependencies:
     version: 7.0.4(@babel/runtime@7.23.2)
   '@web3auth/modal':
     specifier: ^7.0.4
-    version: 7.0.4(@babel/runtime@7.23.2)(@solana/web3.js@1.87.1)(@walletconnect/sign-client@2.10.2)(@walletconnect/types@1.8.0)(@walletconnect/utils@2.10.2)(react-dom@18.2.0)(react@18.2.0)
+    version: 7.0.4(@babel/runtime@7.23.2)(@solana/web3.js@1.87.1)(@walletconnect/sign-client@2.10.4)(@walletconnect/types@1.8.0)(@walletconnect/utils@2.10.2)(react-dom@18.2.0)(react@18.2.0)
   axios:
     specifier: ^1.5.1
     version: 1.5.1
@@ -3871,8 +3874,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@walletconnect/core@2.10.2:
-    resolution: {integrity: sha512-JQz/xp3SLEpTeRQctdck2ugSBVEpMxoSE+lFi2voJkZop1hv6P+uqr6E4PzjFluAjeAnKlT1xvra0aFWjPWVcw==}
+  /@walletconnect/core@2.10.4:
+    resolution: {integrity: sha512-MGdw5a4dIlQFPxVHEw2neIpHPAw3gtrsJYyUqm6rI+1c1SfmZyOPCaYTr6zPU2cnoWQUjv2ePMLeO/JKy3Yh5g==}
     dependencies:
       '@walletconnect/heartbeat': 1.2.1
       '@walletconnect/jsonrpc-provider': 1.0.13
@@ -3885,8 +3888,8 @@ packages:
       '@walletconnect/relay-auth': 1.0.4
       '@walletconnect/safe-json': 1.0.2
       '@walletconnect/time': 1.0.2
-      '@walletconnect/types': 2.10.2
-      '@walletconnect/utils': 2.10.2
+      '@walletconnect/types': 2.10.4
+      '@walletconnect/utils': 2.10.4
       events: 3.3.0
       lodash.isequal: 4.5.0
       uint8arrays: 3.1.1
@@ -4063,17 +4066,17 @@ packages:
       tslib: 1.14.1
     dev: false
 
-  /@walletconnect/sign-client@2.10.2:
-    resolution: {integrity: sha512-vviSLV3f92I0bReX+OLr1HmbH0uIzYEQQFd1MzIfDk9PkfFT/LLAHhUnDaIAMkIdippqDcJia+5QEtT4JihL3Q==}
+  /@walletconnect/sign-client@2.10.4:
+    resolution: {integrity: sha512-C5VHkK59/DQNrJS91UXLn5OSr0drXHkKjajhl2a9hb3h6kxuSdlWbyC0yRPKT1sD0fQho8+EWZHBiV063yBePw==}
     dependencies:
-      '@walletconnect/core': 2.10.2
+      '@walletconnect/core': 2.10.4
       '@walletconnect/events': 1.0.1
       '@walletconnect/heartbeat': 1.2.1
       '@walletconnect/jsonrpc-utils': 1.0.8
       '@walletconnect/logger': 2.0.1
       '@walletconnect/time': 1.0.2
-      '@walletconnect/types': 2.10.2
-      '@walletconnect/utils': 2.10.2
+      '@walletconnect/types': 2.10.4
+      '@walletconnect/utils': 2.10.4
       events: 3.3.0
     transitivePeerDependencies:
       - '@react-native-async-storage/async-storage'
@@ -4118,6 +4121,20 @@ packages:
       - lokijs
     dev: false
 
+  /@walletconnect/types@2.10.4:
+    resolution: {integrity: sha512-eQpOElyiwJp3tepuOS3TS9dXTl9jVVlrC3iVA8bytnbLagkAUxmiv/s7PyDFx+ndXwQVh8PFBkWg1oxGwgCSBA==}
+    dependencies:
+      '@walletconnect/events': 1.0.1
+      '@walletconnect/heartbeat': 1.2.1
+      '@walletconnect/jsonrpc-types': 1.0.3
+      '@walletconnect/keyvaluestorage': 1.0.2
+      '@walletconnect/logger': 2.0.1
+      events: 3.3.0
+    transitivePeerDependencies:
+      - '@react-native-async-storage/async-storage'
+      - lokijs
+    dev: false
+
   /@walletconnect/utils@1.8.0:
     resolution: {integrity: sha512-zExzp8Mj1YiAIBfKNm5u622oNw44WOESzo6hj+Q3apSMIb0Jph9X3GDIdbZmvVZsNPxWDL7uodKgZcCInZv2vA==}
     dependencies:
@@ -4142,6 +4159,28 @@ packages:
       '@walletconnect/safe-json': 1.0.2
       '@walletconnect/time': 1.0.2
       '@walletconnect/types': 2.10.2
+      '@walletconnect/window-getters': 1.0.1
+      '@walletconnect/window-metadata': 1.0.1
+      detect-browser: 5.3.0
+      query-string: 7.1.3
+      uint8arrays: 3.1.1
+    transitivePeerDependencies:
+      - '@react-native-async-storage/async-storage'
+      - lokijs
+    dev: false
+
+  /@walletconnect/utils@2.10.4:
+    resolution: {integrity: sha512-XbrKgnQ0hC9DC9wjFb468MEYMoJxnCVmOj2gi01DA4FSr8fJi7wwNRUnlnZzLWrUWrHuaPReYe4PgBAgIv363g==}
+    dependencies:
+      '@stablelib/chacha20poly1305': 1.0.1
+      '@stablelib/hkdf': 1.0.1
+      '@stablelib/random': 1.0.2
+      '@stablelib/sha256': 1.0.1
+      '@stablelib/x25519': 1.0.3
+      '@walletconnect/relay-api': 1.0.9
+      '@walletconnect/safe-json': 1.0.2
+      '@walletconnect/time': 1.0.2
+      '@walletconnect/types': 2.10.4
       '@walletconnect/window-getters': 1.0.1
       '@walletconnect/window-metadata': 1.0.1
       detect-browser: 5.3.0
@@ -4425,7 +4464,7 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@web3auth/modal@7.0.4(@babel/runtime@7.23.2)(@solana/web3.js@1.87.1)(@walletconnect/sign-client@2.10.2)(@walletconnect/types@1.8.0)(@walletconnect/utils@2.10.2)(react-dom@18.2.0)(react@18.2.0):
+  /@web3auth/modal@7.0.4(@babel/runtime@7.23.2)(@solana/web3.js@1.87.1)(@walletconnect/sign-client@2.10.4)(@walletconnect/types@1.8.0)(@walletconnect/utils@2.10.2)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-kydCQUXkNHk82xhfUF4K1+5PDrucpGu6cxqEeXgVqOzdQ0O8rt8ol1c+vPfWbpGP3SibLEizcFk4GZEw5+vK4Q==}
     engines: {node: '>=18.x', npm: '>=9.x'}
     peerDependencies:
@@ -4445,7 +4484,7 @@ packages:
       '@web3auth/torus-evm-adapter': 7.0.4(@babel/runtime@7.23.2)
       '@web3auth/torus-solana-adapter': 7.0.4(@babel/runtime@7.23.2)(@solana/web3.js@1.87.1)
       '@web3auth/ui': 7.0.4(@babel/runtime@7.23.2)(react-dom@18.2.0)(react@18.2.0)
-      '@web3auth/wallet-connect-v2-adapter': 7.0.4(@babel/runtime@7.23.2)(@walletconnect/sign-client@2.10.2)(@walletconnect/types@1.8.0)(@walletconnect/utils@2.10.2)
+      '@web3auth/wallet-connect-v2-adapter': 7.0.4(@babel/runtime@7.23.2)(@walletconnect/sign-client@2.10.4)(@walletconnect/types@1.8.0)(@walletconnect/utils@2.10.2)
     transitivePeerDependencies:
       - '@react-native-async-storage/async-storage'
       - '@sentry/types'
@@ -4694,7 +4733,7 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@web3auth/wallet-connect-v2-adapter@7.0.4(@babel/runtime@7.23.2)(@walletconnect/sign-client@2.10.2)(@walletconnect/types@1.8.0)(@walletconnect/utils@2.10.2):
+  /@web3auth/wallet-connect-v2-adapter@7.0.4(@babel/runtime@7.23.2)(@walletconnect/sign-client@2.10.4)(@walletconnect/types@1.8.0)(@walletconnect/utils@2.10.2):
     resolution: {integrity: sha512-qcOt6/f+ZpQQmtRGjCr8vtAto8oOwbpX0WqzQAL1Z44/hXhYY7ahOudML5JV3bBiOvix2dyeNdq1B3A/A9svxA==}
     engines: {node: '>=18.x', npm: '>=9.x'}
     peerDependencies:
@@ -4704,7 +4743,7 @@ packages:
       '@walletconnect/utils': ^2.x
     dependencies:
       '@babel/runtime': 7.23.2
-      '@walletconnect/sign-client': 2.10.2
+      '@walletconnect/sign-client': 2.10.4
       '@walletconnect/types': 1.8.0
       '@walletconnect/utils': 2.10.2
       '@web3auth/base': 7.0.4(@babel/runtime@7.23.2)
