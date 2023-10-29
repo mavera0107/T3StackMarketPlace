@@ -4,12 +4,7 @@ import erc20Artifact from "./erc20abi.json";
 const erc20Abi = erc20Artifact.abi;
 
 export async function transferTokens(payload: any) {
-  if (
-    !payload ||
-    !payload.fromAddress ||
-    !payload.toAddress ||
-    !payload.amount
-  ) {
+  if (!payload || !payload.toAddress || !payload.amount) {
     return { success: false, message: "Invalid payload data" };
   }
 
