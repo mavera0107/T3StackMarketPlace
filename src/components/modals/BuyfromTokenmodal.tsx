@@ -31,7 +31,6 @@ import {
 } from "~/utils/contants";
 import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
-import { useContractRead } from "wagmi";
 import { setFetchedBalance } from "~/redux/Features/balanceSlice";
 import { fetchData } from "~/utils/helper-function";
 const BuyFromToken = ({ isModal, setIsModal, nft, setBankTransfer }: any) => {
@@ -257,9 +256,7 @@ const BuyFromToken = ({ isModal, setIsModal, nft, setBankTransfer }: any) => {
         </Button>
       </DialogTrigger>
       <DialogContent className="bg-white">
-        <DialogHeader>
-          <DialogTitle>Checkout</DialogTitle>
-        </DialogHeader>
+        <DialogTitle>Checkout</DialogTitle>
         <div>
           Buy With Your USD Balance
           <p>Your Currect Balance : {balance}$</p>

@@ -149,10 +149,7 @@ export default function TransfertoEOA() {
     <div className="flex flex-col items-center justify-center">
       <div className="rounded-xl bg-purple-400 p-4">
         current Balance :{" "}
-        {Number(balance) === 0
-          ? "Zero Balance"
-          : parseFloat(balance?.toString()) / 1000000}
-        $
+        {Number(balance) === 0 ? "Zero Balance" : parseFloat(balance)}$
       </div>
       <Card className="m-4 w-[350px]">
         <CardHeader>
