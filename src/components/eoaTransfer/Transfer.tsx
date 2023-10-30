@@ -55,7 +55,9 @@ export default function TransfertoEOA() {
     }
     const balance = data as any;
     setbalance(balance);
-  }, [refetch]);
+    console.log("balance", balance);
+    console.log("user", user.wallet_address);
+  }, [user.wallet_address]);
 
   async function handleTransferToken() {
     console.log("handleTransferToken called"); // Add this line for debugging

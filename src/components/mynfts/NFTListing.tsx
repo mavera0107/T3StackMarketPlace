@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { api } from "~/utils/api";
-import NFTCard from "../card/nftcard"; // Assuming the Card component is named NFTCard
+import NFTCard from "../card/NFTcard"; // Assuming the Card component is named NFTCard
 import { Button } from "../ui/ui/button";
 import { Skeleton } from "../ui/ui/skeleton";
 

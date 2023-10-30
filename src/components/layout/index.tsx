@@ -9,7 +9,7 @@ import {
 } from "@biconomy/account";
 import { Web3Auth } from "@web3auth/modal";
 import { useDispatch } from "react-redux";
-import { AppDispatch, RootState, useAppSelector } from "~/redux/store";
+import { AppDispatch, RootState } from "~/redux/store";
 import { CHAIN_NAMESPACES, WALLET_ADAPTERS } from "@web3auth/base";
 import { setSmartAccount } from "~/redux/Features/smartAccountslice";
 import { ChainId } from "@biconomy/core-types";
@@ -18,7 +18,6 @@ import { useSelector } from "react-redux";
 import Footer from "./Footer";
 
 const Layout = ({ children }: { children: ReactNode }) => {
-
   const [user, setUser] = useState<any>();
   const [interval, enableInterval] = useState<boolean>(false);
   const [web3auth, setWeb3auth] = useState<Web3Auth | null>(null);

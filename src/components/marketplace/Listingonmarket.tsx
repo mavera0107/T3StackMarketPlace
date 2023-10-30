@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { api } from "~/utils/api";
-import Card from "../card/nftcard";
+import Card from "../card/NFTcard";
 import { Skeleton } from "../ui/ui/skeleton";
-
 
 const NFTListing = () => {
   const {

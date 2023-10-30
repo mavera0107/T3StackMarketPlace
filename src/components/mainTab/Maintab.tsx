@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Card from "~/components/card/nftcard";
+import Card from "~/components/card/NFTcard";
 import { api } from "~/utils/api";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";

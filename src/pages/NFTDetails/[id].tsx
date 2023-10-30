@@ -27,6 +27,7 @@ const NFTdetails = () => {
       }
     }
   }, []);
+
   const { data, refetch } = api.nft.getNFTById.useQuery({ id: id });
 
   if (!data || !data.response) {
