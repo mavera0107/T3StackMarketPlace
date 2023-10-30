@@ -43,5 +43,6 @@ yarn-error.log*
 tests/
 playwright/test-results
 .github/
-.vscode/
+./vscode
 .env
+
