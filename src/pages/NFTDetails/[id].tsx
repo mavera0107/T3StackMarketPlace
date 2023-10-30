@@ -2,7 +2,7 @@
 import { loadStripe } from "@stripe/stripe-js";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import PaymentMethods from "~/components/Modals/Modal";
+import PaymentMethods from "~/components/modals/Modal";
 import { Skeleton } from "~/components/ui/ui/skeleton";
 import { api } from "~/utils/api";
 

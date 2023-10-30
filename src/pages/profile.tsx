@@ -1,6 +1,6 @@
 import dynamic from "next/dynamic";
 
-const userPage = dynamic(() => import("../components/profile/userProfile"), {
+const userPage = dynamic(() => import("../components/profile/UserProfile"), {
   ssr: false,
 });
 

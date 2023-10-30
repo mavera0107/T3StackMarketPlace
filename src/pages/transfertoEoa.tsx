@@ -1,6 +1,6 @@
 import dynamic from "next/dynamic";
 
-const transfer = dynamic(() => import("../components/EoaTransfer/transfer"), {
+const transfer = dynamic(() => import("../components/eoaTransfer/Transfer"), {
   ssr: false,
 });
 

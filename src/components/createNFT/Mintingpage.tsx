@@ -1,6 +1,6 @@
 import { useState, ChangeEvent, useRef, useEffect } from "react";
 import "react-toastify/dist/ReactToastify.css";
-import { MintModal } from "../Modals/MintModal";
+import { MintModal } from "../modals/MintModal";
 
 function mintingpage() {
   const [isImageSelected, setIsImageSelected] = useState(false);

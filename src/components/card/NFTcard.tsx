@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "../ui/ui/button";
-import { ListModal } from "../Modals/ListModal";
-import { RemoveListModal } from "../Modals/RemoveList";
+import { ListModal } from "../modals/ListModal";
+import { RemoveListModal } from "../modals/RemoveList";
 // Define the interface for the 'nft' prop
 interface NFT {
   id: string;
@@ -29,7 +29,7 @@ const Card: React.FC<CardProps> = ({ nft, mynftRefetch, maintab }) => {
   const [user, setUser] = useState<any>({
     wallet_address: "", // Default value for email
   });
-  
+
   useEffect(() => {
     if (typeof window !== "undefined") {
       const isUser = localStorage.getItem("user");

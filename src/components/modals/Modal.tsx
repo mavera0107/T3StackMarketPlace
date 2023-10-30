@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Elements } from "@stripe/react-stripe-js";
 import { Button } from "../ui/ui/button";
 import BuyFromToken from "./buyfromTokenmodal";
-import StripeForm from "../StripForm/StripeForm";
+import StripeForm from "../stripForm/StripeForm";
 import {
   Dialog,
   DialogContent,

@@ -136,6 +136,7 @@ export default function TransfertoEOA() {
         });
         setTokenAmount(""); // Clear token amount input
         setAddress("");
+        refetch();
       }
     } catch (err) {
       console.error(err);
@@ -181,7 +182,7 @@ export default function TransfertoEOA() {
                   onChange={(e) => {
                     const inputValue = e.target.value;
                     if (isAddress(inputValue)) {
-                      setAddress(inputValue); 
+                      setAddress(inputValue);
                     } else {
                       setError(true);
                     }

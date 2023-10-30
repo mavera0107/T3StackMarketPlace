@@ -104,9 +104,16 @@ const BuyFromToken = ({ isModal, setIsModal, nft, setBankTransfer }: any) => {
     setBtnDisabled(true);
     setIsLoading(true);
     e.preventDefault();
-    const totaltokens = data as any;
+    const totaltokens = data as any; // Assuming data is a numeric value
     console.log(totaltokens);
-    if (Number(parseFloat(totaltokens) / 1000000) !== Number(nft.price)) {
+
+    // Checking if (totaltokens / 1000000) is greater than or equal to nft.price
+    if (Number(parseFloat(totaltokens) / 1000000) <= Number(nft.price)) {
+      // Display an error toast message
+      console.log(
+        "check condition",
+        Number(parseFloat(totaltokens) / 1000000) >= Number(nft.price),
+      );
       toast.error("Cannot Buy With low USDC balance", {
         position: "top-right",
         autoClose: 400,
@@ -117,11 +124,16 @@ const BuyFromToken = ({ isModal, setIsModal, nft, setBankTransfer }: any) => {
         progress: undefined,
         theme: "light",
       });
+
+      // Update state variables
       setisError(true);
       setIsLoading(false);
       setBtnDisabled(false);
+
+      // Exit the function or block of code
       return;
     }
+
     try {
       const transferResponse = await BuyNFT(nft.token_id, nft.price);
       if (transferResponse?.sucess) {
@@ -220,6 +232,7 @@ const BuyFromToken = ({ isModal, setIsModal, nft, setBankTransfer }: any) => {
       console.log("userOpHash buy", userOpResponse);
       const { receipt } = await userOpResponse.wait(1);
       console.log("txHash", receipt.transactionHash);
+      refetch();
       return { sucess: true, transaction_hash: receipt.transactionHash };
     } catch (err) {
       console.error(err);
@@ -238,7 +251,13 @@ const BuyFromToken = ({ isModal, setIsModal, nft, setBankTransfer }: any) => {
         <DialogHeader>
           <DialogTitle>Checkout</DialogTitle>
         </DialogHeader>
-        <div>Buy With Your USD Balance</div>
+        <div>
+          Buy With Your USD Balance
+          <p>
+            Your Currect Balance :{" "}
+            {parseFloat(data?.toString() as any) / 1000000}$
+          </p>
+        </div>
         <DialogFooter className="flex flex-col items-center md:flex-row md:justify-between">
           <div className="flex gap-2">
             <DialogTrigger>
@@ -252,14 +271,21 @@ const BuyFromToken = ({ isModal, setIsModal, nft, setBankTransfer }: any) => {
                 Close
               </Button>
             </DialogTrigger>
-            <Button
-              className="rounded-xl bg-green-300"
-              color="temp-10"
-              type="submit"
-              onClick={handleSubmit}
-            >
-              Buy NFT
-            </Button>
+            {isLoading ? (
+              <Button disabled>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Buy NFT
+              </Button>
+            ) : (
+              <Button
+                className="rounded-xl bg-green-300"
+                color="temp-10"
+                type="submit"
+                onClick={handleSubmit}
+              >
+                Buy NFT
+              </Button>
+            )}
           </div>
 
           {error && (

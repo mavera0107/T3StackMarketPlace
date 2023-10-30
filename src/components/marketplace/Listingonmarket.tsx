@@ -3,20 +3,6 @@ import { api } from "~/utils/api";
 import Card from "../card/nftcard";
 import { Skeleton } from "../ui/ui/skeleton";
 
-// interface NFT {
-//   id: string;
-//   nft_creator: string | null;
-//   nft_owner: string | null;
-//   price: string | null;
-//   ipfs_url: string | null;
-//   name: string | null;
-//   description: string | null;
-//   token_id: string | null;
-//   is_listed: boolean | null;
-//   created_at: Date;
-//   updated_at: Date;
-//   owner_id: string;
-// }
 
 const NFTListing = () => {
   const {

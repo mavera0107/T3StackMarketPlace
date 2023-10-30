@@ -7,7 +7,7 @@ import { polygonMumbai } from "viem/chains";
 import { alchemyProvider } from "wagmi/providers/alchemy";
 import { publicProvider } from "wagmi/providers/public";
 
-const Layout = dynamic(() => import("../components/Layout/index"), {
+const Layout = dynamic(() => import("../components/layout/index"), {
   ssr: false,
 });
 import { ReduxProviders } from "~/redux/provider";
