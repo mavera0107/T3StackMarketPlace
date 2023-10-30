@@ -40,3 +40,8 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
+tests/
+playwright/test-results
+.github/
+.vscode/
+.env
