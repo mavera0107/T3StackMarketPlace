@@ -17,51 +17,25 @@ import { createPublicClient, http } from "viem";
 import { polygonMumbai } from "viem/chains";
 import { ERC20_ABI, USDC_Contract_Address } from "~/utils/contants";
 import { useSelector } from "react-redux";
-import { RootState } from "~/redux/store";
-const client = createPublicClient({
-  chain: polygonMumbai,
-  transport: http(),
-});
+import { AppDispatch, RootState } from "~/redux/store";
+import { fetchData } from "~/utils/helper-function";
+import { setFetchedBalance } from "~/redux/Features/balanceSlice";
 
 export default function Header(props: any) {
   const { smartAccount } = useSelector(
     (state: RootState) => state.smartAccountSlice as any,
   );
-  const [balance, setBalance] = useState("");
+  const { balance } = useSelector(
+    (state: RootState) => state.AccountBalanceSlice as any,
+  );
+
   const dispatch = useDispatch();
   const router = useRouter();
 
   function profile() {
     router.push("/profile");
   }
-  async function fetchData() {
-    try {
-      const result = await client.readContract({
-        address: USDC_Contract_Address,
-        abi: ERC20_ABI,
-        functionName: "balanceOf",
-        args: [props.account.wallet_address],
-      });
-      if (result === undefined || result === null) {
-        console.error("Error: Result is undefined or null");
-        return;
-      }
-      const res: string = result?.toString();
-      // Convert the result to a number, handle precision, and then format it as a string with maximum 6 decimal places
-      const balanceNumber = parseFloat(res) / 1000000;
-      const formattedBalance = balanceNumber.toFixed(6); // Set the desired number of decimal places
 
-      // Remove trailing zeroes and convert the number back to string
-      const balanceString = parseFloat(formattedBalance).toString();
-
-      setBalance(balanceString);
-
-      console.log(result); // Log the original fetched data
-      console.log(balanceString); // Log the formatted balance without trailing zeroes
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  }
   function copyAddress() {
     navigator.clipboard
       .writeText(props.account.wallet_address)
@@ -96,8 +70,20 @@ export default function Header(props: any) {
   }
 
   useEffect(() => {
-    fetchData();
-  });
+    const fetchDataAndSetBalance = async () => {
+      try {
+        const balance = await fetchData(props.account.wallet_address);
+        if (balance) {
+          dispatch(setFetchedBalance(balance));
+        }
+      } catch (error) {
+        // Handle errors here
+        console.log(error);
+      }
+    };
+    fetchDataAndSetBalance();
+    console.log(balance);
+  }, []);
 
   return (
     <header className="body-font text-gray-600">

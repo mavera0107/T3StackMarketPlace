@@ -16,9 +16,14 @@ import { ChainId } from "@biconomy/core-types";
 import { bundler, paymaster } from "../../utils/contants";
 import { useSelector } from "react-redux";
 import Footer from "./Footer";
+import { fetchData } from "~/utils/helper-function";
+import { setFetchedBalance } from "~/redux/Features/balanceSlice";
 
 const Layout = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<any>();
+  const [address, setAddress] = useState<any>({
+    wallet_address: "", // Default value for email
+  });
   const [interval, enableInterval] = useState<boolean>(false);
   const [web3auth, setWeb3auth] = useState<Web3Auth | null>(null);
   const dispatch = useDispatch<AppDispatch>();
@@ -180,9 +185,18 @@ const Layout = ({ children }: { children: ReactNode }) => {
     }
   }
 
+  async function tokenBalance() {
+    const balance = await fetchData(user?.wallet_address);
+    if (balance) {
+      dispatch(setFetchedBalance(balance));
+    }
+  }
+
   useEffect(() => {
     let ifUser: any = JSON.parse(localStorage.getItem("user") as any);
     setUser(ifUser);
+    setAddress(ifUser);
+    tokenBalance();
     if (interval) {
       if (!ifUser) {
       } else {

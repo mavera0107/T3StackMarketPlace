@@ -32,7 +32,13 @@ import {
 import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
 import { useContractRead } from "wagmi";
+import { setFetchedBalance } from "~/redux/Features/balanceSlice";
+import { fetchData } from "~/utils/helper-function";
 const BuyFromToken = ({ isModal, setIsModal, nft, setBankTransfer }: any) => {
+  const { balance } = useSelector(
+    (state: RootState) => state.AccountBalanceSlice as any,
+  );
+  const dispatch = useDispatch();
   const router = useRouter();
   const [error, setisError] = useState(false);
   const { smartAccount } = useSelector(
@@ -51,12 +57,12 @@ const BuyFromToken = ({ isModal, setIsModal, nft, setBankTransfer }: any) => {
     wallet_address: "",
   });
 
-  const { data, refetch } = useContractRead({
-    address: USDC_Contract_Address,
-    abi: ERC20_ABI,
-    functionName: "balanceOf",
-    args: [user.wallet_address],
-  });
+  // const { data, refetch } = useContractRead({
+  //   address: USDC_Contract_Address,
+  //   abi: ERC20_ABI,
+  //   functionName: "balanceOf",
+  //   args: [user.wallet_address],
+  // });
 
   const updateBUy = api.nft.updateBuyNFT.useMutation({
     onSuccess: (res: any) => {
@@ -104,11 +110,11 @@ const BuyFromToken = ({ isModal, setIsModal, nft, setBankTransfer }: any) => {
     setBtnDisabled(true);
     setIsLoading(true);
     e.preventDefault();
-    const totaltokens = data as any; // Assuming data is a numeric value
+    const totaltokens = balance; // Assuming data is a numeric value
     console.log(totaltokens);
 
     // Checking if (totaltokens / 1000000) is greater than or equal to nft.price
-    if (Number(parseFloat(totaltokens) / 1000000) <= Number(nft.price)) {
+    if (Number(totaltokens) <= Number(nft.price)) {
       // Display an error toast message
       console.log(
         "check condition",
@@ -232,7 +238,10 @@ const BuyFromToken = ({ isModal, setIsModal, nft, setBankTransfer }: any) => {
       console.log("userOpHash buy", userOpResponse);
       const { receipt } = await userOpResponse.wait(1);
       console.log("txHash", receipt.transactionHash);
-      refetch();
+      const balance = await fetchData(user.wallet_address);
+      if (balance) {
+        dispatch(setFetchedBalance(balance));
+      }
       return { sucess: true, transaction_hash: receipt.transactionHash };
     } catch (err) {
       console.error(err);
@@ -253,10 +262,7 @@ const BuyFromToken = ({ isModal, setIsModal, nft, setBankTransfer }: any) => {
         </DialogHeader>
         <div>
           Buy With Your USD Balance
-          <p>
-            Your Currect Balance :{" "}
-            {parseFloat(data?.toString() as any) / 1000000}$
-          </p>
+          <p>Your Currect Balance : {balance}$</p>
         </div>
         <DialogFooter className="flex flex-col items-center md:flex-row md:justify-between">
           <div className="flex gap-2">

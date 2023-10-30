@@ -24,8 +24,14 @@ import {
 } from "@biconomy/paymaster";
 import { useDispatch } from "react-redux";
 import { useContractRead } from "wagmi";
+import { setFetchedBalance } from "~/redux/Features/balanceSlice";
+import { fetchData } from "~/utils/helper-function";
 
 export default function TransfertoEOA() {
+  const dispatch = useDispatch();
+  const { balance } = useSelector(
+    (state: RootState) => state.AccountBalanceSlice as any,
+  );
   const { smartAccount } = useSelector(
     (state: RootState) => state.smartAccountSlice as any,
   );
@@ -33,16 +39,8 @@ export default function TransfertoEOA() {
   const [address, setAddress] = useState(""); // State for price input
   const [isError, setError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [balance, setbalance] = useState(false);
   const [user, setUser] = useState<any>({
     wallet_address: "", // Default value for email
-  });
-
-  const { data, error, refetch } = useContractRead({
-    address: USDC_Contract_Address,
-    abi: ERC20_ABI,
-    functionName: "balanceOf",
-    args: [user.wallet_address],
   });
 
   useEffect(() => {
@@ -53,11 +51,8 @@ export default function TransfertoEOA() {
         setUser(userData);
       }
     }
-    const balance = data as any;
-    setbalance(balance);
-    console.log("balance", balance);
     console.log("user", user.wallet_address);
-  }, [user.wallet_address]);
+  }, []);
 
   async function handleTransferToken() {
     console.log("handleTransferToken called"); // Add this line for debugging
@@ -138,7 +133,10 @@ export default function TransfertoEOA() {
         });
         setTokenAmount(""); // Clear token amount input
         setAddress("");
-        refetch();
+        const balance = await fetchData(user.wallet_address);
+        if (balance) {
+          dispatch(setFetchedBalance(balance));
+        }
       }
     } catch (err) {
       console.error(err);
