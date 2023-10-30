@@ -25,13 +25,11 @@ function mintingpage() {
     const file = e.target.files && e.target.files[0];
 
     if (file) {
-      // Set the selected image to the file object
       setSelectedImage(file);
       setIsImageSelected(true);
     } else {
       setSelectedImage(null);
       setIsImageSelected(false);
-      // Clear the selected image if it's not a valid PNG file
     }
   };
 

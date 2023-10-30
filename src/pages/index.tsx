@@ -1,10 +1,7 @@
 import Head from "next/head";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { BsChevronCompactLeft, BsChevronCompactRight } from "react-icons/bs";
 import { RxDotFilled } from "react-icons/rx";
-import MainTabs from "~/components/mainTab/Maintab";
 import dynamic from "next/dynamic";
 import { RootState } from "~/redux/store";
 import { useSelector } from "react-redux";

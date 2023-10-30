@@ -4,7 +4,6 @@ import {
   createnftschema,
   ListNFTSchema,
   BuyNFTSchema,
-  getNftSchema,
   getUserNftSchema,
   getNFTByIdSchema,
 } from "../../../schema/nft";

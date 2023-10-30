@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "../ui/ui/button";
-import { useSelector } from "react-redux";
-import { RootState } from "~/redux/store";
 import { ListModal } from "../Modals/ListModal";
 import { RemoveListModal } from "../Modals/RemoveList";
 // Define the interface for the 'nft' prop

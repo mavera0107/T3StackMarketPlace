@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/ui/avatar";
 import {
@@ -13,19 +13,10 @@ import { Button } from "../ui/ui/button";
 import { setSmartAccount } from "~/redux/Features/smartAccountslice";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
-import { ERC20_ABI, USDC_Contract_Address } from "~/utils/contants";
-import { useContractRead } from "wagmi";
 
 export default function Header(props: any) {
   const dispatch = useDispatch();
   const router = useRouter();
-
-  const { data, error, refetch } = useContractRead({
-    address: USDC_Contract_Address,
-    abi: ERC20_ABI,
-    functionName: "balanceOf",
-    args: [props.account.wallet_address],
-  });
 
   function profile() {
     router.push("/profile");
@@ -57,17 +48,12 @@ export default function Header(props: any) {
       });
       router.replace("/login");
     } catch (error) {
-      // throw new Error(error)
       console.log(error, "error");
     }
   }
   function TransfertoEOA() {
     router.push("/transfertoEoa");
   }
-
-  useEffect(() => {
-    refetch();
-  });
 
   return (
     <header className="body-font text-gray-600">
@@ -89,10 +75,6 @@ export default function Header(props: any) {
               <Link href="/listednfts">Listed Nfts</Link>
             </a>
           </nav>
-        </div>
-        <div className="m-3 flex flex-row items-center justify-center rounded-xl bg-purple-400">
-          <div className="rounded-xl p-2">Balance</div>
-          <div>:{parseFloat(data?.toString()) / 1000000}$</div>
         </div>
         <div className="flex items-center justify-center bg-white">
           <div className="rounded-xl bg-purple-400 p-2" onClick={copyAddress}>

@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Button } from "~/components/ui/ui/button";
 import { ToastContainer, toast } from "react-toastify";
@@ -23,6 +23,7 @@ import {
   SponsorUserOperationDto,
 } from "@biconomy/paymaster";
 import { useDispatch } from "react-redux";
+import { useContractRead } from "wagmi";
 
 export default function TransfertoEOA() {
   const { smartAccount } = useSelector(
@@ -32,6 +33,29 @@ export default function TransfertoEOA() {
   const [address, setAddress] = useState(""); // State for price input
   const [isError, setError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [balance, setbalance] = useState(false);
+  const [user, setUser] = useState<any>({
+    wallet_address: "", // Default value for email
+  });
+
+  const { data, error, refetch } = useContractRead({
+    address: USDC_Contract_Address,
+    abi: ERC20_ABI,
+    functionName: "balanceOf",
+    args: [user.wallet_address],
+  });
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const isUser = localStorage.getItem("user");
+      if (isUser) {
+        const userData = JSON.parse(isUser);
+        setUser(userData);
+      }
+    }
+    const balance = data as any;
+    setbalance(balance);
+  }, [refetch]);
 
   async function handleTransferToken() {
     console.log("handleTransferToken called"); // Add this line for debugging
@@ -122,7 +146,14 @@ export default function TransfertoEOA() {
 
   return (
     <div className="flex flex-col items-center justify-center">
-      <Card className="w-[350px]">
+      <div className="rounded-xl bg-purple-400 p-4">
+        current Balance :{" "}
+        {Number(balance) === 0
+          ? "Zero Balance"
+          : parseFloat(balance?.toString()) / 1000000}
+        $
+      </div>
+      <Card className="m-4 w-[350px]">
         <CardHeader>
           <CardTitle>Transfer Amount To EOA</CardTitle>
           <CardDescription>
@@ -149,10 +180,8 @@ export default function TransfertoEOA() {
                   value={address}
                   onChange={(e) => {
                     const inputValue = e.target.value;
-                    // Check if inputValue meets your condition(s)
                     if (isAddress(inputValue)) {
-                      // Example condition: inputValue should have a length of at least 5 characters
-                      setAddress(inputValue); // Set the address state if the condition is met
+                      setAddress(inputValue); 
                     } else {
                       setError(true);
                     }

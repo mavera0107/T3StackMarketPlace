@@ -336,7 +336,6 @@ const StripeForm = ({
         pauseOnHover
         theme="light"
       />
-      {/* Same as */}
       <ToastContainer />
     </Dialog>
   );

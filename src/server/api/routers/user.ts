@@ -19,7 +19,7 @@ export const userRouter = createTRPCRouter({
     });
   }),
 
-  me: publicProcedure.query(({ ctx }) => {
+  modal: publicProcedure.query(({ ctx }) => {
     return ctx.db.adminUser;
   }),
 
