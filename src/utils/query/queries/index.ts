@@ -12,7 +12,6 @@ export function FETCH_CREATED_NFT(address: any) {
 } `;
 }
 
-
 export function FETCH_RECENT_BUY(address: any) {
   return `query {
   buys(where:{to:"${address}"}){
@@ -24,6 +23,7 @@ export function FETCH_RECENT_BUY(address: any) {
     Name
     to
     from
+    blockTimestamp
   }
 }`;
 }
@@ -39,6 +39,7 @@ export function FETCH_RECENT_SOLD(address: any) {
     Name
     to
     from
+    blockTimestamp
   }
 }`;
 }
