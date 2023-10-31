@@ -5,7 +5,7 @@ import { Skeleton } from "../ui/ui/skeleton";
 
 const NFTListing = () => {
   const {
-    data: UserNFTListing,
+    data: NFTListing,
     error,
     refetch,
     isLoading,
@@ -23,11 +23,20 @@ const NFTListing = () => {
       </div>
     );
   }
+  if (NFTListing?.length === 0) {
+    return (
+      <div className="w-50 mb-32 mt-24 flex h-52 items-center justify-center">
+        <div className="rounded-xl border border-gray-300 p-4 shadow-lg">
+          No NFT At Listing Currently
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
       <div className="grid grid-cols-6 gap-4 sm:grid-cols-3 md:grid-cols-5">
-        {UserNFTListing?.map((nft, index) => (
+        {NFTListing?.map((nft, index) => (
           <Card key={index} nft={nft} maintab={false} mynftRefetch={refetch} />
         ))}
       </div>

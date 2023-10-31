@@ -36,13 +36,9 @@ const MainTabs = () => {
   }
 
   // Usage
-  const {
-    data: UserNFTListing,
-    error,
-    refetch,
-  } = api.nft.getNFTListing.useQuery();
+  const { data: NFTListing, error, refetch } = api.nft.getNFTListing.useQuery();
 
-  const nftIterable = createNFTIterable(UserNFTListing);
+  const nftIterable = createNFTIterable(NFTListing);
   const shuffledNfts2: NFTItem[] = [...nftIterable].sort(
     () => Math.random() - 0.5,
   );
@@ -125,13 +121,17 @@ const MainTabs = () => {
                     maintab={true}
                   />
                 ))}
-                {shuffledNfts2 === undefined &&
-                  Array.from({ length: 6 }).map((_, index) => (
-                    <div key={index} className="carousel-item mx-2">
-                      <Skeleton className="w-50 h-52" />
-                    </div>
-                  ))}
               </Carousel>
+              {NFTListing === undefined ||
+                (NFTListing.length === 0 && (
+                  <div className="w-50 mb-32 mt-24 flex h-52 items-center justify-center">
+                    <div className="w-50 mb-32 mt-24 flex h-52 items-center justify-center">
+                      <div className="rounded-xl border border-gray-300 p-4 shadow-lg">
+                        No NFT At Listing Currently
+                      </div>
+                    </div>
+                  </div>
+                ))}
             </div>
           </div>
         </div>

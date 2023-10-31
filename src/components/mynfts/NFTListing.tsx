@@ -41,6 +41,16 @@ const MyNFTs = () => {
     );
   }
 
+    if (UserNFTListing?.length === 0) {
+      return (
+        <div className="w-50 mb-32 mt-24 flex h-52 items-center justify-center">
+          <div className="rounded-xl border border-gray-300 p-4 shadow-lg">
+            No NFT At Listing Currently
+          </div>
+        </div>
+      );
+    }
+
   return (
     <div className="m-12 mb-10 flex flex-col items-start justify-start">
       <div className="m-4 grid grid-cols-6 gap-4 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-4">

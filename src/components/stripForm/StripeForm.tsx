@@ -32,6 +32,8 @@ import {
 } from "~/utils/contants";
 import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
+import { setFetchedBalance } from "~/redux/Features/balanceSlice";
+import { fetchData } from "~/utils/helper-function";
 const StripeForm = ({
   isModal,
   setIsModal,
@@ -71,6 +73,7 @@ const StripeForm = ({
           progress: undefined,
           theme: "light",
         });
+
         router.push("/mynfts");
         setIsLoading(false);
       }
@@ -90,7 +93,7 @@ const StripeForm = ({
       console.log(err.message, "NFT Creation Error");
     },
   });
-  const fetchData = async (fromAddress: any, toAddress: any, amount: any) => {
+  const BuyToken = async (fromAddress: any, toAddress: any, amount: any) => {
     try {
       let bal = await transferTokens({
         fromAddress: fromAddress,
@@ -179,7 +182,7 @@ const StripeForm = ({
         if (!response.ok) {
           throw new Error("API request failed");
         }
-        const TokenResponse = await fetchData(
+        const TokenResponse = await BuyToken(
           "0xEdb8373211332CC6F141CEBB7B8587C7CFb68243",
           user.wallet_address,
           Number(nft.price) * 1000000,
@@ -192,9 +195,12 @@ const StripeForm = ({
               wallet_address: user.wallet_address,
               owner_id: user.id,
             };
-
             let response = await updateBUy.mutateAsync(value);
             console.log("Response", response);
+            const balance = await fetchData(user.wallet_address);
+            if (balance) {
+              dispatch(setFetchedBalance(balance));
+            }
           }
         }
         setIsModal(false);
