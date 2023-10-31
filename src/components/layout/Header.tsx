@@ -68,6 +68,9 @@ export default function Header(props: any) {
   function TransfertoEOA() {
     router.push("/transfertoEoa");
   }
+   function RecentTransaction() {
+     router.push("/recenttransaction");
+   }
 
   useEffect(() => {
     const fetchDataAndSetBalance = async () => {
@@ -134,6 +137,12 @@ export default function Header(props: any) {
               <DropdownMenuSeparator className="bg-gray-300" />
               <DropdownMenuItem className="font-bold" onClick={TransfertoEOA}>
                 <Button>Transfer Tokens To EOA</Button>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="font-bold"
+                onClick={RecentTransaction}
+              >
+                <Button>Recent Trasaction</Button>
               </DropdownMenuItem>
               <DropdownMenuItem className="font-bold">
                 <Button onClick={logout}>Logout</Button>
