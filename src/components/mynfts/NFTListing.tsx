@@ -41,15 +41,15 @@ const MyNFTs = () => {
     );
   }
 
-    if (UserNFTListing?.length === 0) {
-      return (
-        <div className="w-50 mb-32 mt-24 flex h-52 items-center justify-center">
-          <div className="rounded-xl border border-gray-300 p-4 shadow-lg">
-            No NFT At Listing Currently
-          </div>
+  if (UserNFTListing?.length === 0) {
+    return (
+      <div className="w-50 mb-32 mt-24 flex h-52 items-center justify-center">
+        <div className="rounded-xl border border-gray-300 p-4 shadow-lg">
+          Mint NFT First
         </div>
-      );
-    }
+      </div>
+    );
+  }
 
   return (
     <div className="m-12 mb-10 flex flex-col items-start justify-start">

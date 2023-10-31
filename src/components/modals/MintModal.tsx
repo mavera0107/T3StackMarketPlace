@@ -117,6 +117,7 @@ export const MintModal: React.FC<MintModalProps> = ({
       console.log("result: ", tokenId.toNumber());
       tokenId = tokenId.toNumber() + 1;
       console.log(tokenId);
+      console.log("Metadata", tokenURI);
       let isUser: any = JSON.parse(localStorage.getItem("user") as any);
       const populatedTxn = await contract.populateTransaction.safeMint(
         isUser.wallet_address,
@@ -194,9 +195,10 @@ export const MintModal: React.FC<MintModalProps> = ({
         let TokenUri = await `https://ipfs.io/ipfs/${metadatares?.IpfsHash}`;
         let ImageUrl =
           await `https://ipfs.io/ipfs/${uploadImages?.IpfshashImage}`;
-
         let tokenId = await handleMint(TokenUri);
 
+        console.log("ImageUrl", ImageUrl);
+        console.log("Metadata", TokenUri);
         const payload = {
           owner_id: isUser.id,
           nft_owner: isUser.wallet_address,

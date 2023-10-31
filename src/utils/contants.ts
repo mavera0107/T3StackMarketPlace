@@ -16,8 +16,7 @@ export const paymaster: IPaymaster = new BiconomyPaymaster({
 });
 
 export const NFT_Contract_Address =
-  "0xaF1ED7d23ddE2a7c3Dd5c79B5Eb85de4dF1aD54c";
-
+  "0xCF9c48cB6d68413714eceF716949a3fCbca32A9c";
 export const USDC_Contract_Address =
   "0x27c70A68D5fe16f462EAFa40B33df9E6d095D63c";
 export const Debug = false;
