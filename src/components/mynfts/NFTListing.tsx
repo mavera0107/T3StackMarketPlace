@@ -53,7 +53,7 @@ const MyNFTs = () => {
 
   return (
     <div className="m-12 mb-10 flex flex-col items-start justify-start">
-      <div className="m-4 grid grid-cols-6 gap-4 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-4">
+      <div className="m-4 grid grid-cols-6 gap-4 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6">
         {UserNFTListing?.map((nft, index) => (
           <NFTCard
             key={index}

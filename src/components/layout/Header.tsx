@@ -12,7 +12,8 @@ import { useRouter } from "next/router";
 import { Button } from "../ui/ui/button";
 import { setSmartAccount } from "~/redux/Features/smartAccountslice";
 import { useDispatch } from "react-redux";
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { createPublicClient, http } from "viem";
 import { polygonMumbai } from "viem/chains";
 import { ERC20_ABI, USDC_Contract_Address } from "~/utils/contants";
@@ -53,17 +54,19 @@ export default function Header(props: any) {
       dispatch(setFetchedBalance("0"));
       dispatch(setAddress(""));
       localStorage.clear();
-      toast("Logout Successfully!", {
+      toast.success("Logout Successfully!", {
         position: "top-right",
         autoClose: 5000,
-        hideProgressBar: false,
+        hideProgressBar: true,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
         theme: "light",
       });
-      router.replace("/login");
+      setTimeout(() => {
+        router.replace("/login"); // Replace '/test' with your desired route
+      }, 1000);
     } catch (error) {
       console.log(error, "error");
     }
@@ -155,6 +158,20 @@ export default function Header(props: any) {
           </DropdownMenu>
         </div>
       </div>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={true}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+      {/* Same as */}
+      <ToastContainer />
     </header>
   );
 }

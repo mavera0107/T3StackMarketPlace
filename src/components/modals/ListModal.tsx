@@ -236,10 +236,16 @@ export const ListModal: React.FC<nftData> = ({ tokenId, refetch }) => {
         position="top-right"
         autoClose={5000}
         hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
         pauseOnFocusLoss
-        pauseOnHover={false}
+        draggable
+        pauseOnHover
         theme="light"
       />
+      {/* Same as */}
+      <ToastContainer />
     </>
   );
 };

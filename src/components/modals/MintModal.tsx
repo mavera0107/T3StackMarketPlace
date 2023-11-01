@@ -57,7 +57,7 @@ export const MintModal: React.FC<MintModalProps> = ({
     onSuccess: (res: any) => {
       console.log(res, "Login result");
       if (res) {
-        toast("NFT Created Successfully!", {
+        toast.success("NFT Created Successfully!", {
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,

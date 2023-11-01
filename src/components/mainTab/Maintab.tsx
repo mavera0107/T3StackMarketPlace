@@ -46,12 +46,12 @@ const MainTabs = () => {
   const responsive = {
     desktop: {
       breakpoint: { max: 3000, min: 1024 },
-      items: 6,
+      items: 7,
       partialVisibilityGutter: 0,
     },
     tablet: {
       breakpoint: { max: 1024, min: 640 },
-      items: 5,
+      items: 6,
       partialVisibilityGutter: 0,
     },
     mobile: {

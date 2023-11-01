@@ -253,6 +253,7 @@ const BuyFromToken = ({ isModal, setIsModal, nft, setBankTransfer }: any) => {
         <div>
           Buy With Your USD Balance
           <p>Your Currect Balance : {balance}$</p>
+          <p>This NFT Price : {nft.price}$</p>
         </div>
         <DialogFooter className="flex flex-col items-center md:flex-row md:justify-between">
           <div className="flex gap-2">
@@ -274,6 +275,7 @@ const BuyFromToken = ({ isModal, setIsModal, nft, setBankTransfer }: any) => {
               </Button>
             ) : (
               <Button
+                disabled={balance <= nft.price}
                 className="rounded-xl bg-green-300"
                 color="temp-10"
                 type="submit"

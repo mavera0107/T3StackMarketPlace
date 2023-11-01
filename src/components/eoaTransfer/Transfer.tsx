@@ -42,20 +42,6 @@ export default function TransfertoEOA() {
   const [address, setAddress] = useState(""); // State for price input
   const [isError, setError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  // const [user, setUser] = useState<any>({
-  //   wallet_address: "", // Default value for email
-  // });
-
-  // useEffect(() => {
-  //   if (typeof window !== "undefined") {
-  //     const isUser = localStorage.getItem("user");
-  //     if (isUser) {
-  //       const userData = JSON.parse(isUser);
-  //       setUser(userData);
-  //     }
-  //   }
-  //   console.log("user", user.wallet_address);
-  // }, []);
 
   async function handleTransferToken() {
     console.log("handleTransferToken called"); // Add this line for debugging
