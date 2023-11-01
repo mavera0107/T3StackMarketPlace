@@ -56,13 +56,6 @@ const BuyFromToken = ({ isModal, setIsModal, nft, setBankTransfer }: any) => {
     wallet_address: "",
   });
 
-  // const { data, refetch } = useContractRead({
-  //   address: USDC_Contract_Address,
-  //   abi: ERC20_ABI,
-  //   functionName: "balanceOf",
-  //   args: [user.wallet_address],
-  // });
-
   const updateBUy = api.nft.updateBuyNFT.useMutation({
     onSuccess: (res: any) => {
       console.log(res, "Login result");

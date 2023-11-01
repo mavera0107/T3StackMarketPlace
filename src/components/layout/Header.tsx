@@ -20,6 +20,7 @@ import { useSelector } from "react-redux";
 import { AppDispatch, RootState } from "~/redux/store";
 import { fetchData } from "~/utils/helper-function";
 import { setFetchedBalance } from "~/redux/Features/balanceSlice";
+import { setAddress } from "~/redux/Features/smartaccountaddressSlice";
 
 export default function Header(props: any) {
   const { smartAccount } = useSelector(
@@ -49,6 +50,8 @@ export default function Header(props: any) {
   async function logout() {
     try {
       dispatch(setSmartAccount(undefined));
+      dispatch(setFetchedBalance("0"));
+      dispatch(setAddress(""));
       localStorage.clear();
       toast("Logout Successfully!", {
         position: "top-right",
@@ -68,12 +71,13 @@ export default function Header(props: any) {
   function TransfertoEOA() {
     router.push("/transfertoEoa");
   }
-   function RecentTransaction() {
-     router.push("/recenttransaction");
-   }
+  function RecentTransaction() {
+    router.push("/recenttransaction");
+  }
 
   useEffect(() => {
     const fetchDataAndSetBalance = async () => {
+      dispatch(setAddress(props.account.wallet_address));
       try {
         const balance = await fetchData(props.account.wallet_address);
         if (balance) {

@@ -3,7 +3,8 @@ import Link from "next/link";
 import { Button } from "../ui/ui/button";
 import { ListModal } from "../modals/ListModal";
 import { RemoveListModal } from "../modals/RemoveList";
-// Define the interface for the 'nft' prop
+import { useSelector } from "react-redux";
+import { RootState } from "~/redux/store";
 interface NFT {
   id: string;
   nft_creator: string | null;
@@ -26,20 +27,9 @@ interface CardProps {
 }
 
 const Card: React.FC<CardProps> = ({ nft, mynftRefetch, maintab }) => {
-  const [user, setUser] = useState<any>({
-    wallet_address: "", // Default value for email
-  });
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const isUser = localStorage.getItem("user");
-      if (isUser) {
-        const userData = JSON.parse(isUser);
-        setUser(userData);
-      }
-    }
-    console.log(nft.nft_owner === user.wallet_address);
-  }, []);
+    const { AccountAddress } = useSelector(
+      (state: RootState) => state.AccountAddress as any,
+    );
   return (
     <div className="w-50 mb-32 mt-24 flex h-52 items-center justify-center">
       <div className="rounded-xl border border-gray-300 p-4 shadow-lg hover:shadow-2xl hover:shadow-green-300">
@@ -57,7 +47,7 @@ const Card: React.FC<CardProps> = ({ nft, mynftRefetch, maintab }) => {
           <></>
         ) : (
           <div>
-            {user.wallet_address && nft.nft_owner === user.wallet_address ? (
+            {AccountAddress && nft.nft_owner === AccountAddress ? (
               nft.is_listed ? (
                 <RemoveListModal
                   tokenId={String(nft.token_id)}

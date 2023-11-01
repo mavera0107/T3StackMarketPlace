@@ -17,6 +17,7 @@ import { Loader2 } from "lucide-react";
 import { setSmartAccount } from "~/redux/Features/smartAccountslice";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "~/redux/store";
+import { setAddress } from "~/redux/Features/smartaccountaddressSlice";
 export default function RegisterationPage() {
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
@@ -188,6 +189,7 @@ export default function RegisterationPage() {
       console.log("Smart Account : ", smartAccount);
       // Save the smart account to a state variable
       let address = await smartAccount.getSmartAccountAddress();
+      dispatch(setAddress(address));
       const user = await web3auth?.getUserInfo();
       console.log("User", user);
       console.log(user?.email, user?.name);

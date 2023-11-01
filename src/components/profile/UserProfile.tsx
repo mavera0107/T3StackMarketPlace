@@ -21,13 +21,16 @@ import {
 } from "../ui/ui/sheet";
 import { api } from "~/utils/api";
 import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
+import { RootState } from "~/redux/store";
 
 export default function userProfile() {
+  const { AccountAddress } = useSelector(
+    (state: RootState) => state.AccountAddress as any,
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setError] = useState(false);
-  const [user, setUser] = useState<any>({
-    wallet_address: "", // Default value for email
-  });
+
   const updateUser = api.user.updateUser.useMutation({
     onSuccess: (res: any) => {
       console.log(res, "Login result");
@@ -55,7 +58,7 @@ export default function userProfile() {
 
   const { data, refetch } = api.user.getuserdata.useQuery(
     {
-      wallet_address: user.wallet_address,
+      wallet_address: AccountAddress,
     },
     {
       refetchOnWindowFocus: true,
@@ -79,7 +82,7 @@ export default function userProfile() {
     console.log("UserDetails", getUserDetails);
 
     const payload = {
-      wallet_address: user.wallet_address,
+      wallet_address: AccountAddress,
       full_name: getUserDetails.Name,
     };
 
@@ -91,15 +94,6 @@ export default function userProfile() {
     console.log("Response", response);
   }
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const isUser = localStorage.getItem("user");
-      if (isUser) {
-        const userData = JSON.parse(isUser);
-        setUser(userData);
-      }
-    }
-  }, []);
 
   return (
     <Fragment>

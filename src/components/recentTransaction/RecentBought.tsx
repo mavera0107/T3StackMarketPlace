@@ -11,6 +11,8 @@ import React, { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { subgraphQuery } from "~/utils/query/query";
 import { FETCH_RECENT_BUY } from "~/utils/query/queries";
+import { useSelector } from "react-redux";
+import { RootState } from "~/redux/store";
 interface NFT {
   id: number;
   tokenId: number;
@@ -23,28 +25,18 @@ interface NFT {
   blockTimestamp: number;
 }
 export default function RecentBought() {
-  const [user, setUser] = useState<any>({
-    wallet_address: "", // Default value for email
-  });
-  const { data: NFTs, isLoading } = useQuery(["boughtnft"], Query, {
-    staleTime: 5000,
-  });
+  const { AccountAddress } = useSelector(
+    (state: RootState) => state.AccountAddress as any,
+  );
+  const { data: NFTs, isLoading } = useQuery(["boughtnft"], Query, {});
 
   async function Query() {
-    const Query = await subgraphQuery(FETCH_RECENT_BUY(user.wallet_address));
+    const Query = await subgraphQuery(FETCH_RECENT_BUY(AccountAddress));
     return Query;
   }
 
   console.log(NFTs);
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const isUser = localStorage.getItem("user");
-      if (isUser) {
-        const userData = JSON.parse(isUser);
-        setUser(userData);
-      }
-    }
-  }, []);
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center rounded-lg text-2xl text-red-500">
@@ -73,7 +65,7 @@ export default function RecentBought() {
             <TableRow key={nft.tokenId}>
               <TableCell className="font-medium">{nft.tokenId}</TableCell>
               <TableCell>{nft.Name}</TableCell>
-              <TableCell>{nft.Description}</TableCell>
+              <TableCell>{nft.Description.slice(0, 13)}</TableCell>
               <TableCell>
                 <img
                   src={nft.ImageUrl as any}

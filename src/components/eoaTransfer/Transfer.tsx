@@ -23,9 +23,9 @@ import {
   SponsorUserOperationDto,
 } from "@biconomy/paymaster";
 import { useDispatch } from "react-redux";
-import { useContractRead } from "wagmi";
 import { setFetchedBalance } from "~/redux/Features/balanceSlice";
 import { fetchData } from "~/utils/helper-function";
+import { Loader2 } from "lucide-react";
 
 export default function TransfertoEOA() {
   const dispatch = useDispatch();
@@ -35,24 +35,27 @@ export default function TransfertoEOA() {
   const { smartAccount } = useSelector(
     (state: RootState) => state.smartAccountSlice as any,
   );
+  const { AccountAddress } = useSelector(
+    (state: RootState) => state.AccountAddress as any,
+  );
   const [tokenAmount, setTokenAmount] = useState(""); // State for input value
   const [address, setAddress] = useState(""); // State for price input
   const [isError, setError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [user, setUser] = useState<any>({
-    wallet_address: "", // Default value for email
-  });
+  // const [user, setUser] = useState<any>({
+  //   wallet_address: "", // Default value for email
+  // });
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const isUser = localStorage.getItem("user");
-      if (isUser) {
-        const userData = JSON.parse(isUser);
-        setUser(userData);
-      }
-    }
-    console.log("user", user.wallet_address);
-  }, []);
+  // useEffect(() => {
+  //   if (typeof window !== "undefined") {
+  //     const isUser = localStorage.getItem("user");
+  //     if (isUser) {
+  //       const userData = JSON.parse(isUser);
+  //       setUser(userData);
+  //     }
+  //   }
+  //   console.log("user", user.wallet_address);
+  // }, []);
 
   async function handleTransferToken() {
     console.log("handleTransferToken called"); // Add this line for debugging
@@ -133,7 +136,7 @@ export default function TransfertoEOA() {
         });
         setTokenAmount(""); // Clear token amount input
         setAddress("");
-        const balance = await fetchData(user.wallet_address);
+        const balance = await fetchData(AccountAddress);
         if (balance) {
           dispatch(setFetchedBalance(balance));
         }
@@ -195,7 +198,15 @@ export default function TransfertoEOA() {
             onClick={handleTransferToken}
             disabled={isLoading}
           >
-            {isLoading ? "Please wait" : "Transfer"}
+            {isLoading ? (
+              <>
+                {" "}
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Please Wait
+              </>
+            ) : (
+              "Transfer"
+            )}
           </Button>
         </CardFooter>
       </Card>
