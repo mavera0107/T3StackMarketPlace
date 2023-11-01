@@ -275,7 +275,7 @@ const BuyFromToken = ({ isModal, setIsModal, nft, setBankTransfer }: any) => {
               </Button>
             ) : (
               <Button
-                disabled={balance <= nft.price}
+                disabled={Number(nft.price) >= Number(balance)}
                 className="rounded-xl bg-green-300"
                 color="temp-10"
                 type="submit"
