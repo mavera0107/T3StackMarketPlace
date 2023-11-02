@@ -51,12 +51,9 @@ export default function RegisterationPage() {
         const web3auth = new Web3Auth({
           clientId,
           uiConfig: {
-            mode: "light",
             appName: "NFTrops",
-            logoLight: "mainlogo.png", // <-- Your dApp Name
-            theme: {
-              primary: "#ffffff",
-            }, // "light" | "dark" | "auto"
+            appLogo: "mainlogo.png", // <-- Your dApp Name
+            theme: "light", //light" | "dark" | "auto"
             defaultLanguage: "en", // en, de, ja, ko, zh, es, fr, pt, nl
             loginGridCol: 2, // 2 | 3
             // primaryButton: "externalLogin", // "externalLogin" | "socialLogin" | "emailLogin"
